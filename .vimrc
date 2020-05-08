@@ -12,8 +12,8 @@ noremap <silent> <leader>d :bp \| bd#<cr>
 set number
 
 " set system clipboard
-"set clipboard=unnamed
-set clipboard=unnamedplus
+set clipboard=unnamed
+"set clipboard=unnamedplus
 
 " mouse input
 set mouse=a

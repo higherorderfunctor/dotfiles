@@ -116,7 +116,7 @@ RUN apk update && \
 
 # install python
 COPY --from=dotfiles-python-base /opt/python-3.8 /opt/python-3.8
-     
+
 RUN echo '/opt/python-3.8/lib' >> /etc/ld-musl-x86_64.path
 
 RUN ln -s /opt/python-3.8/bin/python3.8 /usr/local/bin/python && \
@@ -142,7 +142,11 @@ RUN apk --no-cache add \
         cmake-doc \
         dumb-init \
         gcc-doc \
-        man man-pages mdocml-apropos less less-doc \
+        mandoc \
+        man-pages \
+        mandoc-apropos \
+        less \
+        less-doc \
         openssh-client \
         tmux \
         zsh
