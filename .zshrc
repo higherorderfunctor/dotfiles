@@ -70,8 +70,9 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
-  poetry
 )
+
+[[ -d ~/.poetry ]] && plugins+=('poetry')
 
 source $ZSH/oh-my-zsh.sh
 
