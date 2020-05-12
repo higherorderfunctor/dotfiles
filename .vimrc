@@ -36,6 +36,7 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 
 " NERDTree config
 map <C-O> :NERDTreeToggle<CR>
+let NERDTreeShowHidden = 1
 let NERDTreeIgnore = ['__pycache__', '\.pyc$']
 
 " filetype config
@@ -99,6 +100,7 @@ set rtp+=~/.fzf
 map <leader>at :ALEToggle<CR>
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\  'python': ['isort'],
 \ }
 
 let g:ale_fix_on_save = 1
