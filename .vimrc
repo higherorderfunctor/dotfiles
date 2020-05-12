@@ -18,7 +18,7 @@ set clipboard=unnamed
 " mouse input
 set mouse=a
 
-" Spellcheck Toggle
+" spellcheck toggle
 :map <silent> <F8> :setlocal spell! spelllang=en_us<CR>
 
 " set the colorscheme
@@ -52,7 +52,7 @@ set autoindent
 set shiftround
 
 " python config
-au FileType python setlocal shiftwidth=4 tabstop=4 smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+au FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4 smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class,with
 au BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
 au FileType python set foldmethod=indent foldlevel=99
 
