@@ -37,7 +37,15 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 " NERDTree config
 map <C-O> :NERDTreeToggle<CR>
 let NERDTreeShowHidden = 1
-let NERDTreeIgnore = ['__pycache__', '\.pyc$']
+let NERDTreeIgnore = [
+\ '[._]*.s[a-v][a-z]',
+\ '[._]*.sw[a-p]',
+\ '[._]s[a-rt-v][a-z]',
+\ '[._]ss[a-gi-z]',
+\ '[._]sw[a-p]',
+\  '__pycache__',
+\ '\.pyc$'
+\ ]
 
 " filetype config
 filetype on
