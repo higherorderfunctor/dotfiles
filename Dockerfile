@@ -80,6 +80,8 @@ RUN apk update && \
     apk upgrade && \
     apk --no-cache add ca-certificates && \
     apk --no-cache add \
+        autoconf \
+        automake \
         bzip2-dev \
         coreutils \
         clang \
@@ -101,6 +103,7 @@ RUN apk update && \
         libnsl-dev \
         libressl-dev \
         libtirpc-dev \
+        libtool \
         linux-headers \
         llvm9 \
         llvm9-dev \
