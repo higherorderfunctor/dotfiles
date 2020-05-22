@@ -38,13 +38,13 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 map <C-O> :NERDTreeToggle<CR>
 let NERDTreeShowHidden = 1
 let NERDTreeIgnore = [
-\ '[._]*.s[a-v][a-z]',
-\ '[._]*.sw[a-p]',
+\ '[._]*[.]s[a-v][a-z]',
+\ '[._]*[.]sw[a-p]',
 \ '[._]s[a-rt-v][a-z]',
 \ '[._]ss[a-gi-z]',
 \ '[._]sw[a-p]',
 \  '__pycache__',
-\ '\.pyc$'
+\ '*[.]pyc$'
 \ ]
 
 " filetype config
