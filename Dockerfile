@@ -145,6 +145,8 @@ RUN apk --no-cache add \
         automake \
         bash \
         busybox-extras \
+        docker \
+        docker-compose \
         cmake-doc \
         gcc-doc \
         mandoc \
@@ -154,8 +156,11 @@ RUN apk --no-cache add \
         less-doc \
         libtool \
         openssh-client \
+        openrc \
         tmux \
         zsh
+
+RUN rc-update add docker boot
 
 ENV TERM xterm-256color
 ENV SHELL /bin/zsh
