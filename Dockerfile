@@ -142,7 +142,6 @@ FROM dotfiles-build:latest AS dotfiles-dev
 # install managed dependencies
 RUN apk --no-cache add \
         autoconf \
-        autoreconf \
         automake \
         bash \
         busybox-extras \
@@ -155,7 +154,6 @@ RUN apk --no-cache add \
         less-doc \
         libtool \
         openssh-client \
-        telnet \
         tmux \
         zsh
 
@@ -191,4 +189,3 @@ VOLUME /root
 
 # set entry
 ENTRYPOINT ["/sbin/init", "--"]
-
