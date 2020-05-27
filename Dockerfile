@@ -141,7 +141,11 @@ FROM dotfiles-build:latest AS dotfiles-dev
 
 # install managed dependencies
 RUN apk --no-cache add \
+        autoconf \
+        autoreconf \
+        automake \
         bash \
+        busybox-extras \
         cmake-doc \
         gcc-doc \
         mandoc \
@@ -149,7 +153,9 @@ RUN apk --no-cache add \
         mandoc-apropos \
         less \
         less-doc \
+        libtool \
         openssh-client \
+        telnet \
         tmux \
         zsh
 
