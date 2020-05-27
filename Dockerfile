@@ -143,7 +143,6 @@ FROM dotfiles-build:latest AS dotfiles-dev
 RUN apk --no-cache add \
         bash \
         cmake-doc \
-        dumb-init \
         gcc-doc \
         mandoc \
         man-pages \
@@ -185,4 +184,5 @@ WORKDIR /root
 VOLUME /root
 
 # set entry
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+ENTRYPOINT ["/sbin/init", "--"]
+
