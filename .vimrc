@@ -60,6 +60,9 @@ set expandtab
 set autoindent
 set shiftround
 
+" json config
+au FileType json set foldmethod=syntax foldlevel=5
+
 " python config
 au FileType python setlocal shiftwidth=4 tabstop=4 softtabstop=4 smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class,with
 au BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
