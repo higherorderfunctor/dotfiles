@@ -116,3 +116,6 @@ let g:ale_fixers = {
 
 let g:ale_echo_msg_format = '[%linter%/%severity%/%code%] %s'
 let g:ale_fix_on_save = 1
+
+" local-vimrc config
+let g:localvimrc_persistent = 1
