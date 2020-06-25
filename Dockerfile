@@ -153,6 +153,7 @@ RUN apk --no-cache add \
         mandoc \
         man-pages \
         mandoc-apropos \
+        nodejs-current \
         less \
         less-doc \
         libtool \
