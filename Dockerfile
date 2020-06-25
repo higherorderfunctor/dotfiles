@@ -145,6 +145,7 @@ RUN apk --no-cache add \
         automake \
         bash \
         busybox-extras \
+        curl \
         docker \
         docker-compose \
         cmake-doc \
