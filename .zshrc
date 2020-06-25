@@ -106,3 +106,5 @@ bindkey -v
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -d ~/.poetry ] && export PATH=$PATH:~/.poetry/bin
+
+PATH=$PATH:./node_modules/bin
