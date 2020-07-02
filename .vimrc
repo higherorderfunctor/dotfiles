@@ -112,8 +112,8 @@ map <leader>at :ALEToggle<CR>
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \  'python': ['isort', 'remove_trailing_lines', 'trim_whitespace'],
-\  'javascript': ['eslint', 'prettier'],
-\  'typescript': ['eslint', 'prettier'],
+\  'javascript': ['eslint', 'prettier', 'remove_trailing_lines', 'trim_whitespace'],
+\  'typescript': ['eslint', 'prettier', 'remove_trailing_lines', 'trim_whitespace'],
 \ }
 
 let g:ale_echo_msg_format = '[%linter%/%severity%/%code%] %s'
