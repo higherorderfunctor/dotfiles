@@ -17,6 +17,11 @@ set clipboard=unnamed
 
 " mouse input
 set mouse=a
+if has("mouse_sgr")
+    set ttymouse=sgr
+else
+    set ttymouse=xterm2
+end
 
 " spellcheck toggle
 :map <silent> <F8> :setlocal spell! spelllang=en_us<CR>
@@ -121,3 +126,8 @@ let g:ale_fix_on_save = 1
 
 " local-vimrc config
 let g:localvimrc_persistent = 1
+
+" tsuquyomi config
+let g:tsuquyomi_completion_detail = 1
+let g:tsuquyomi_disable_quickfix = 1
+autocmd FileType typescript setlocal completeopt-=preview
