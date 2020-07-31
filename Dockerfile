@@ -150,15 +150,18 @@ RUN apk --no-cache add \
         docker-compose \
         cmake-doc \
         gcc-doc \
+        grep \
         mandoc \
         man-pages \
         mandoc-apropos \
         less \
         less-doc \
         libtool \
+        node-current \
         openssh-client \
         openrc \
         tmux \
+        yarn \
         zsh
 
 RUN rc-update add docker boot
