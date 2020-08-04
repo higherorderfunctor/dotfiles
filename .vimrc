@@ -114,13 +114,16 @@ set rtp+=~/.fzf
 
 " ALE config
 map <leader>at :ALEToggle<CR>
+
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \  'python': ['isort', 'remove_trailing_lines', 'trim_whitespace'],
-\  'javascript': ['eslint', 'prettier', 'remove_trailing_lines', 'trim_whitespace'],
-\  'typescript': ['eslint', 'prettier', 'remove_trailing_lines', 'trim_whitespace'],
+\  'javascript': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
+\  'typescript': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
 \ }
 
+let g:ale_javascript_eslint_executable = 'eslint_d --cache'
+let g:ale_typescript_eslint_executable = 'eslint_d --cache'
 let g:ale_echo_msg_format = '[%linter%/%severity%/%code%] %s'
 let g:ale_fix_on_save = 1
 
@@ -133,7 +136,6 @@ let g:tsuquyomi_disable_quickfix = 1
 autocmd FileType typescript setlocal completeopt-=preview
 
 " coc config
-
 " tab completion
 inoremap <silent><expr> <TAB>
   \ pumvisible() ? "\<C-n>" :
@@ -147,6 +149,5 @@ function! s:check_back_space() abort
 endfunction
 
 " goto
-nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
