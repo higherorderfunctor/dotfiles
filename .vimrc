@@ -132,9 +132,9 @@ let g:ale_fix_on_save = 1
 let g:localvimrc_persistent = 1
 
 " tsuquyomi config
-let g:tsuquyomi_completion_detail = 1
-let g:tsuquyomi_disable_quickfix = 1
-autocmd FileType typescript setlocal completeopt-=preview
+" let g:tsuquyomi_completion_detail = 1
+" let g:tsuquyomi_disable_quickfix = 1
+" autocmd FileType typescript setlocal completeopt-=preview
 
 " coc config
 " tab completion
