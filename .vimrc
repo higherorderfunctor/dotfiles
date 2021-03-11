@@ -53,6 +53,12 @@ let NERDTreeIgnore = [
 \ '.*[.]pyc$'
 \ ]
 
+" FZF config
+set rtp+=~/.fzf
+nmap <C-P> :Files<CR>
+nmap <C-F> :Buffers<CR>
+let g:fzf_preview_window = ['right:60%', 'ctrl-/']
+
 " filetype config
 filetype on
 filetype plugin on
@@ -109,9 +115,6 @@ set incsearch               " Incrementally search while typing a /regex
 
 " automatically read a file that has changed on disk
 set autoread
-
-" fzf config
-set rtp+=~/.fzf
 
 " ALE config
 map <leader>at :ALEToggle<CR>
