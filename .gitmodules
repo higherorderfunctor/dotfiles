@@ -40,3 +40,6 @@
 [submodule ".vim/bundle/fzf.vim"]
 	path = .vim/bundle/fzf.vim
 	url = https://github.com/junegunn/fzf.vim.git
+[submodule ".vim/bundle/riv.vim"]
+	path = .vim/bundle/riv.vim
+	url = https://github.com/gu-fan/riv.vim.git
