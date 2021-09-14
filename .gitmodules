@@ -43,3 +43,6 @@
 [submodule ".vim/bundle/riv.vim"]
 	path = .vim/bundle/riv.vim
 	url = https://github.com/gu-fan/riv.vim.git
+[submodule ".vim/bundle/vim-floaterm"]
+	path = .vim/bundle/vim-floaterm
+	url = https://github.com/voldikss/vim-floaterm.git

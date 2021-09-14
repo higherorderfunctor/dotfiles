@@ -7,6 +7,11 @@ noremap <silent> <leader>p :bp<cr>
 noremap <silent> <leader>n :bn<cr>
 noremap <silent> <leader><tab> :b#<cr>
 noremap <silent> <leader>d :bp \| bd#<cr>
+noremap <silent> <leader>ta :FloatermNew<cr>
+noremap <silent> <leader>tt :FloatermToggle<cr>
+noremap <silent> <leader>tp :FloatermPrev<cr>
+noremap <silent> <leader>tn :FloatermNext<cr>
+noremap <silent> <leader>tk :FloatermKill<cr>
 
 " line numbers
 set number
