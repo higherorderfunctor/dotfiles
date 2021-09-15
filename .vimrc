@@ -1,3 +1,5 @@
+set mmp=10000
+
 call pathogen#infect()
 call pathogen#helptags()
 
