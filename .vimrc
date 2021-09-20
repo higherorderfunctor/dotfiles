@@ -162,3 +162,6 @@ endfunction
 " goto
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
+
+" riv config
+let g:riv_disable_folding = 1
