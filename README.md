@@ -62,7 +62,7 @@ rm $HOME/.zshrc && ln -s $HOME/Documents/dotfiles/.zshrc $HOME/
 # poetry
 sudo apt-get install python3-pip python3-distutils
 wget https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py -qO - | python3
-mkdir $ZSHi_CUSTOM/plugins/poetry
+mkdir $ZSH_CUSTOM/plugins/poetry
 $HOME/.poetry/bin/poetry completions zsh > $ZSH_CUSTOM/plugins/poetry/_poetry
 
 # fzf
