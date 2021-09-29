@@ -103,8 +103,11 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 bindkey -v
+setopt HIST_IGNORE_SPACE
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -d ~/.poetry ] && export PATH=$PATH:~/.poetry/bin
 
 PATH=./node_modules/.bin:$PATH
+
+export PATH="$HOME/.poetry/bin:$PATH"
