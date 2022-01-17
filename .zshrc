@@ -19,3 +19,5 @@ setopt HIST_IGNORE_SPACE
 PATH=./node_modules/.bin:$PATH
 
 export EDITOR="vim"
+
+export PATH="$HOME/.poetry/bin:$PATH"
