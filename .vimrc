@@ -57,7 +57,9 @@ let NERDTreeIgnore = [
 \ '[._]ss[a-gi-z]$',
 \ '[._]sw[a-p]$',
 \  '__pycache__',
-\ '.*[.]pyc$'
+\ '.*[.]pyc$',
+\ '[.]pytest_cache',
+\ '[.]mypy_cache'
 \ ]
 
 " FZF config
