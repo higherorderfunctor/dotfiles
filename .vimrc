@@ -34,14 +34,14 @@ end
 :map <silent> <F8> :setlocal spell! spelllang=en_us<CR>
 
 " set the colorscheme
-colorscheme nord
-let g:nord_bold_vertical_split_line = 1
+colorscheme jellybeans
+"let g:nord_bold_vertical_split_line = 1
 
 " prevent needing to save buffers when switching
 set hidden
 
 " airline config
-let g:airline_theme = 'nord'
+let g:airline_theme = 'jellybeans'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#tabline#enabled = 1
@@ -138,6 +138,7 @@ let g:ale_fixers = {
 let g:ale_javascript_eslint_executable = 'eslint_d --cache'
 let g:ale_typescript_eslint_executable = 'eslint_d --cache'
 let g:ale_echo_msg_format = '[%linter%/%severity%/%code%] %s'
+" let g:ale_detail_to_floating_preview = 1
 let g:ale_fix_on_save = 1
 
 " local-vimrc config

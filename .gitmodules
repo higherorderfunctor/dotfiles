@@ -46,3 +46,6 @@
 [submodule ".vim/bundle/vim-floaterm"]
 	path = .vim/bundle/vim-floaterm
 	url = https://github.com/voldikss/vim-floaterm.git
+[submodule ".tmux/plugins/tmux-onedark-theme"]
+	path = .tmux/plugins/tmux-onedark-theme
+	url = https://github.com/odedlaz/tmux-onedark-theme.git
