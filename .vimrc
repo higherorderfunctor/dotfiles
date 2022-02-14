@@ -127,6 +127,7 @@ set autoread
 
 " ALE config
 map <leader>at :ALEToggle<CR>
+map <leader>ad :ALEDetail<CR>
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
