@@ -25,18 +25,12 @@
 [submodule ".vim/bundle/coc.nvim"]
 	path = .vim/bundle/coc.nvim
 	url = https://github.com/neoclide/coc.nvim.git
-[submodule ".vim/bundle/nord-vim"]
-	path = .vim/bundle/nord-vim
-	url = https://github.com/arcticicestudio/nord-vim
 [submodule ".vim/bundle/typescript-vim"]
 	path = .vim/bundle/typescript-vim
 	url = https://github.com/leafgarland/typescript-vim.git
 [submodule ".tmux/plugins/tpm"]
 	path = .tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
-[submodule ".tmux/plugins/nord-tmux"]
-	path = .tmux/plugins/nord-tmux
-	url = https://github.com/arcticicestudio/nord-tmux
 [submodule ".vim/bundle/fzf.vim"]
 	path = .vim/bundle/fzf.vim
 	url = https://github.com/junegunn/fzf.vim.git
