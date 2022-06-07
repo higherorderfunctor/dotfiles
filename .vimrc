@@ -128,6 +128,7 @@ set autoread
 " ALE config
 map <leader>at :ALEToggle<CR>
 map <leader>ad :ALEDetail<CR>
+map <leader>ac :pclose<CR>
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
@@ -172,3 +173,13 @@ nmap <silent> gi <Plug>(coc-implementation)
 
 " riv config
 let g:riv_disable_folding = 1
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+nnoremap <silent> K :call ShowDocumentation()<CR>
