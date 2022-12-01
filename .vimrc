@@ -1,4 +1,4 @@
-set mmp=10000
+ set mmp=10000
 
 call pathogen#infect()
 call pathogen#helptags()
@@ -157,16 +157,15 @@ let g:localvimrc_persistent = 1
 
 " coc config
 " tab completion
-inoremap <silent><expr> <TAB>
-  \ pumvisible() ? "\<C-n>" :
-  \ <SID>check_back_space() ? "\<TAB>" :
-  \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
 function! s:check_back_space() abort
   let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+  return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
+
+inoremap <silent><expr> <Tab>
+      \pumvisible() ? "\<C-n>" :
+      \<SID>check_back_space() ? "\<Tab>" :
+      \coc#refresh()
 
 " goto
 nmap <silent> gd <Plug>(coc-definition)
