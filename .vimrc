@@ -1,4 +1,5 @@
  set mmp=10000
+let g:riv_python_rst_hl = 0
 
 call pathogen#infect()
 call pathogen#helptags()
@@ -156,16 +157,16 @@ let g:localvimrc_persistent = 1
 " autocmd FileType typescript setlocal completeopt-=preview
 
 " coc config
-" tab completion
-function! s:check_back_space() abort
+" use <tab> for trigger completion and navigate to the next complete item
+function! CheckBackspace() abort
   let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
+  return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 inoremap <silent><expr> <Tab>
-      \pumvisible() ? "\<C-n>" :
-      \<SID>check_back_space() ? "\<Tab>" :
-      \coc#refresh()
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
 
 " goto
 nmap <silent> gd <Plug>(coc-definition)
