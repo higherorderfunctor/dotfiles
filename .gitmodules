@@ -43,3 +43,6 @@
 [submodule ".tmux/plugins/tmux-onedark-theme"]
 	path = .tmux/plugins/tmux-onedark-theme
 	url = https://github.com/odedlaz/tmux-onedark-theme.git
+[submodule ".vim/bundle/rust.vim"]
+	path = .vim/bundle/rust.vim
+	url = https://github.com/rust-lang/rust.vim.git

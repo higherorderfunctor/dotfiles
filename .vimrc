@@ -140,6 +140,7 @@ let g:ale_fixers = {
 \  'javascriptreact': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
 \  'typescriptreact': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
 \  'json': ['jq', 'remove_trailing_lines', 'trim_whitespace'],
+\  'rust': ['rustfmt', 'remove_trailing_lines', 'trim_whitespace'],
 \ }
 
 let g:ale_javascript_eslint_executable = 'eslint_d --cache'
