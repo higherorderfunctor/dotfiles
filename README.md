@@ -4,17 +4,8 @@
 # install dependencies
 sudo apt-get install git zsh tmux vim-gtk
 
-# install nord (Gnome Terminal)
-git clone https://github.com/arcticicestudio/nord-gnome-terminal.git
-cd nord-gnome-terminal/src
-./nord.sh
-cd ../..
-rm -rf nord-gnome-terminal
-
 # install font
 https://github.com/powerline/fonts/blob/master/DejaVuSansMono/DejaVu%20Sans%20Mono%20for%20Powerline.ttf
-
-# update nord profile as default and use powerline font
 
 # install nodejs
 VERSION=v15.0.1
@@ -43,27 +34,35 @@ git clone --recurse-submodules -j8 https://github.com/higherorderfunctor/dotfile
 # pull submodules if doing regular clone
 git submodule update --init --recursive -j8
 
-# update all submodules
+# update all submodules to tip of default branch
+git submodule foreach git reset --hard
+git submodule foreach git fetch
+git submodule foreach git checkout $(git remote show origin | grep "HEAD branch" | sed 's/.*: //')
 git submodule update --recursive --remote
 
+# install or update
+cd ~/.vim/bundle/coc.nvim
+npm install
+cd ~
+
 # dotfilesA (assuming clones to ~/Documents)
-ln -s $HOME/Documents/dotfiles/.vimrc $HOME/
-ln -s $HOME/Documents/dotfiles/.vim $HOME/
-ln -s $HOME/Documents/dotfiles/.tmux.conf $HOME/
-ln -s $HOME/Documents/dotfiles/.tmux $HOME/
+ln -s $HOME/.dotfiles/.vimrc $HOME/
+ln -s $HOME/.dotfiles/.vim $HOME/
+ln -s $HOME/.dotfiles/.tmux.conf $HOME/
+ln -s $HOME/.dotfiles/.tmux $HOME/
 
 # in vim
-:call coc#util#install()
+:CocInstall coc-tsserver
 
 # zsh
 sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
-rm $HOME/.zshrc && ln -s $HOME/Documents/dotfiles/.zshrc $HOME/
+rm $HOME/.zshrc && ln -s $HOME/.dotfiles/.zshrc $HOME/
 
 # poetry
 sudo apt-get install python3-pip python3-distutils
-wget https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py -qO - | python3
+curl -sSL https://install.python-poetry.org | python3 -
 mkdir $ZSH_CUSTOM/plugins/poetry
-$HOME/.poetry/bin/poetry completions zsh > $ZSH_CUSTOM/plugins/poetry/_poetry
+poetry completions zsh > $ZSH_CUSTOM/plugins/poetry/_poetry
 
 # fzf
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
