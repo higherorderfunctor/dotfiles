@@ -15,6 +15,7 @@ noremap <silent> <leader>tt :FloatermToggle<cr>
 noremap <silent> <leader>tp :FloatermPrev<cr>
 noremap <silent> <leader>tn :FloatermNext<cr>
 noremap <silent> <leader>tk :FloatermKill<cr>
+noremap <silent> <leader>gg :Graphviz!!<cr>
 
 " line numbers
 set number
@@ -197,3 +198,7 @@ function! ShowDocumentation()
 endfunction
 
 nnoremap <silent> K :call ShowDocumentation()<CR>
+
+" Graphviz
+let g:graphviz_output_format = 'png'
+let g:graphviz_shell_option = ''
