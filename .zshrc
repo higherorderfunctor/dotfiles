@@ -15,7 +15,7 @@ setopt HIST_IGNORE_SPACE
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-PATH=./node_modules/.bin:$PATH
+PATH=./node_modules/.bin:/usr/lib/jvm/jdk-20/bin:$PATH
 
 export EDITOR="vim"
 
