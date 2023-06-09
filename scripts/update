@@ -36,5 +36,5 @@ git fetch --recurse-submodules -j8
 git submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD);git submodule update --recursive'
 
 (
-  cd .vim/bundle/coc.nvim && npm ci
+  cd .vim/bundle/coc.nvim && npm install
 )
