@@ -134,14 +134,14 @@ map <leader>ad :ALEDetail<CR>
 map <leader>ac :pclose<CR>
 
 let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\  'python': ['isort', 'black', 'remove_trailing_lines', 'trim_whitespace'],
-\  'javascript': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
-\  'typescript': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
-\  'javascriptreact': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
-\  'typescriptreact': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
-\  'json': ['jq', 'remove_trailing_lines', 'trim_whitespace'],
-\  'rust': ['rustfmt', 'remove_trailing_lines', 'trim_whitespace'],
+  \'*': ['remove_trailing_lines', 'trim_whitespace'],
+  \'python': ['isort', 'black', 'remove_trailing_lines', 'trim_whitespace'],
+  \'javascript': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
+  \'typescript': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
+  \'javascriptreact': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
+  \'typescriptreact': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
+  \'json': ['jq', 'remove_trailing_lines', 'trim_whitespace'],
+  \'rust': ['rustfmt', 'remove_trailing_lines', 'trim_whitespace'],
 \ }
 
 let g:ale_javascript_eslint_executable = 'eslint_d --cache'
@@ -166,9 +166,9 @@ function! CheckBackspace() abort
 endfunction
 
 inoremap <silent><expr> <Tab>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
+          \ coc#pum#visible() ? coc#pum#next(1) :
+          \ CheckBackspace() ? "\<Tab>" :
+          \ coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 if has('nvim')
@@ -177,7 +177,8 @@ else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+inoremap <silent><expr> <CR> coc#pum#visible()
+                              \? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " goto
