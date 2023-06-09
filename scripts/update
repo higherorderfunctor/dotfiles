@@ -28,9 +28,9 @@ git fetch -j8 origin
 git merge --ff --no-edit origin/"$(git rev-parse --abbrev-ref HEAD)"
 git submodule update --init --recursive
 
-# # fetch the latest submodule changes locally
-# # git fetch --recurse-submodules -j8
-#
-# # update each submodule to HEAD of default branch
-# # shellcheck disable=SC2016
-# git submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD);git submodule update --recursive'
+# fetch the latest submodule changes locally
+git fetch --recurse-submodules -j8
+
+# update each submodule to HEAD of default branch
+# shellcheck disable=SC2016
+git submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD);git submodule update --recursive'
