@@ -13,7 +13,7 @@ git submodule foreach --recursive git clean -fdx
 git submodule update --init --recursive
 
 # commit this file if changed
-git commit scripts/update -m 'chore: update script updated' || 1
+git commit scripts/update -m 'chore: update script updated' || true
 
 # # determine no pending changes that will be lost
 # git update-index --refresh
