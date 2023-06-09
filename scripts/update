@@ -38,3 +38,5 @@ git submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD);git submo
 (
   cd .vim/bundle/coc.nvim && npm install
 )
+
+vim -c 'CocInstall coc-json coc-tsserver'
