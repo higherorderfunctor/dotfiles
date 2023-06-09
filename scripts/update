@@ -24,8 +24,8 @@ git diff-index --quiet HEAD -- || \
 git clean -fdx
 
 # pull latest upstream changes to this branch
-git fetch origin
-git pull -j8
+git fetch -j8 origin
+git merge --ff --no-edit origin/"$(git rev-parse --abbrev-ref HEAD)"
 git submodule update --init --recursive
 
 # # fetch the latest submodule changes locally
