@@ -15,11 +15,11 @@ git submodule update --init --recursive
 # commit this file if changed
 git commit scripts/update -m 'chore: update script updated' || true
 
-# # determine no pending changes that will be lost
-# git update-index --refresh
-# git diff-index --quiet HEAD -- || \
-#   echo "ERROR: Commit or revert changes or they will be lost"
-#
+# determine no pending changes that will be lost
+git update-index --refresh
+git diff-index --quiet HEAD -- || \
+  echo "ERROR: Commit or revert changes or they will be lost"
+
 # # remove untracked artifacts
 # git clean -fdx
 #
