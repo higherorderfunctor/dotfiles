@@ -34,3 +34,7 @@ git fetch --recurse-submodules -j8
 # update each submodule to HEAD of default branch
 # shellcheck disable=SC2016
 git submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD);git submodule update --recursive'
+
+(
+  cd .vim/bundle/coc.nvim && npm ci
+)
