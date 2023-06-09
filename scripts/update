@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -euETo pipefail
+shopt -s inherit_errexit
+
+cd "$(dirname "$0")/.."
+
+# determine no pending changes that will be lost
+git update-index --refresh
+git diff-index --quiet HEAD -- || \
+  echo "ERROR: Commit or revert changes or they will be lost"
+
+# remove untracked artifacts
+git clean -fdx
+git submodule -j8 foreach git reset --hard
+git submodule -j8 foreach git clean -fdx
+
+# pull latest upstream changes to this branch
+git pull -j8
+git submodule update --init --recursive -j8
+
+# fetch the latest submodule changes locally
+# git fetch --recurse-submodules -j8
+
+# update each submodule to HEAD of default branch
+# shellcheck disable=SC2016
+git submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD);git submodule update --recursive'
