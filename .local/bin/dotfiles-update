@@ -41,7 +41,7 @@ dotfiles submodule foreach --recursive git clean -fdx
 dotfiles submodule update --init --recursive
 
 # commit this file if changed
-dotfiles commit .local/bin/dotfiles-update -m 'chore: dotfiles-update updated' || true
+dotfiles commit ~/.local/bin/dotfiles-update -m 'chore: dotfiles-update updated' || true
 
 # determine no pending changes that will be lost
 dotfiles update-index --refresh
@@ -62,20 +62,28 @@ dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git
 dotfiles commit -am 'chore: submodules updated' || true
 dotfiles push origin main
 
-curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+# install or upgrade nvim
+curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/download/nvim.appimage || true
 chmod u+x ~/.local/bin/nvim
 
+# install vim-plug
+[ -f ~/.local/share/nvim/site/autoload/plug.vim ] && curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+# upgrade vim-plug
 nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugUpgrade" -c "qa"
+
+# upgrade plugins
 nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugUpdate" -c "qa"
 
-declare -a coc_extensions=(
-  coc-json
-  coc-tsserver
-)
-
-mkdir -p ~/.config/coc/extensions
-
+# install coc extensions
 (
+  declare -a coc_extensions=(
+    coc-json
+    coc-tsserver
+  )
+
+  mkdir -p ~/.config/coc/extensions
+
   cd ~/.config/coc/extensions
   if [ ! -f package.json ]
   then
@@ -84,4 +92,5 @@ mkdir -p ~/.config/coc/extensions
   npm install "${coc_extensions[@]}" --install-strategy=shallow --ignore-scripts --no-bin-links --no-package-lock --omit=dev
 )
 
+# update coc extensions
 nvim -es -u ~/.config/nvim/init.vim -i NONE -c "CocUpdateSync" -c "qa"
