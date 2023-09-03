@@ -6,6 +6,10 @@ shopt -s inherit_errexit
 
 cd "$HOME"
 
+mkdir -p ~/Backups/Personal
+mkdir -p ~/Backups/Shared
+mkdir -p ~/Backups/Work
+
 declare -a packages=(
   rclone
   shellcheck
