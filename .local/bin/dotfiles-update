@@ -60,6 +60,9 @@ dotfiles submodule foreach 'dit checkout $(git rev-parse --abbrev-ref HEAD); git
 
 .fzf/install --completion --key-bindings --no-update-rc
 
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -o ~/.local/bin/nvim
+chmod u+x ~/.local/bin/nvim
+
 nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugUpgrade" -c "qa"
 nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugUpdate" -c "qa"
 
