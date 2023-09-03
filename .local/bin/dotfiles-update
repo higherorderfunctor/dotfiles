@@ -49,7 +49,7 @@ dotfiles diff-index --quiet HEAD -- || \
 
 # pull latest upstream changes to this branch
 dotfiles fetch -j8 origin
-dotfiles merge --ff --no-edit "$(dotfiles rev-parse --abbrev-ref FETCH_HEAD)"
+dotfiles merge --ff --no-edit origin/"$(dotfiles rev-parse --abbrev-ref HEAD)"
 dotfiles submodule update --init --recursive
 
 # fetch the latest submodule changes locally
