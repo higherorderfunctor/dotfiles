@@ -67,7 +67,9 @@ curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/down
 chmod u+x ~/.local/bin/nvim
 
 # install vim-plug
-[ -f ~/.local/share/nvim/site/autoload/plug.vim ] && curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+if [ -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
+  curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
 
 # upgrade vim-plug
 nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugUpgrade" -c "qa"
