@@ -58,6 +58,8 @@ dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git
 
 .fzf/install --completion --key-bindings --no-update-rc
 
+dotfiles commit .local/bin/dotfiles-update -m 'chore: submodules updated' || true
+
 curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
 chmod u+x ~/.local/bin/nvim
 
