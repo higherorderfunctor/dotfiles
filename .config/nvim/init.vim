@@ -1,3 +1,8 @@
+" Run PlugInstall if there are missing plugins
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+\| endif
+
 call plug#begin()
 Plug 'https://github.com/dense-analysis/ale.git'
 Plug 'https://github.com/neoclide/coc.nvim.git', {'branch': 'release'}
@@ -31,8 +36,11 @@ noremap <silent> <leader>gg :Graphviz!!<cr>
 set number
 
 " set system clipboard
-" set clipboard=unnamed
-set clipboard=unnamedplus
+if has("unnamedplus")
+  set clipboard=unnamedplus
+else
+  set clipboard=unnamed
+endif
 
 " mouse input
 set mouse=a

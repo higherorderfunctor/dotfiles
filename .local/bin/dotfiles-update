@@ -1,0 +1,78 @@
+#!/bin/bash
+
+set -euETo pipefail
+shopt -s expand_aliases
+shopt -s inherit_errexit
+
+cd "$HOME"
+
+declare -a packages=(
+  shellcheck
+  tmux
+  zsh
+  wl-clipboard
+  xclip
+)
+
+(
+  for package in "${packages[@]}"
+  do
+    if ! dpkg-query -W -f='${Status}' "$package"  | sed -r "s/.*(ok installed).*/\1: $package\n/"; then
+      sudo apt-get update && sudo apt-get install -y shellcheck tmux zsh wl-clipboard xclip
+      break
+    fi
+  done
+)
+
+PATH=".local/bin:$PATH"
+alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+dotfiles config user.name "Christopher Aubut"
+dotfiles config user.email "christopher@aubut.me"
+
+set -x
+
+# reset changes to submodules
+dotfiles submodule foreach --recursive git reset --hard
+dotfiles submodule foreach --recursive git clean -fdx
+dotfiles submodule update --init --recursive
+
+# commit this file if changed
+dotfiles commit scripts/update -m 'chore: dotfiles-update updated' || true
+
+# determine no pending changes that will be lost
+dotfiles update-index --refresh
+dotfiles diff-index --quiet HEAD -- || \
+  echo "ERROR: commit or revert changes or they will be lost"
+
+# pull latest upstream changes to this branch
+dotfiles fetch -j8 origin
+dotfiles merge --ff --no-edit origin/"$(dotfiles rev-parse --abbrev-ref HEAD)"
+dotfiles submodule update --init --recursive
+
+# fetch the latest submodule changes locally
+dotfiles fetch --recurse-submodules -j8
+
+# update each submodule to HEAD of default branch
+# shellcheck disable=SC2016
+dotfiles submodule foreach 'dotfiles checkout $(dotfiles rev-parse --abbrev-ref HEAD); dotfiles submodule update --recursive'
+
+.fzf/install --completion --key-bindings --no-update-rc
+
+nvim -es -u .config/nvim/init.vim -i NONE -c "PlugUpgrade" -c "qa"
+nvim -es -u .config/nvim/init.vim -i NONE -c "PlugUpdate" -c "qa"
+
+declare -a coc_extensions=(
+  coc-json
+  coc-tsserver
+)
+
+mkdir -p ~/.config/coc/extensions
+cd ~/.config/coc/extensions
+if [ ! -f package.json ]
+then
+  echo '{"dependencies":{}}'> package.json
+fi
+npm install "${coc_extensions[@]}" --install-strategy=shallow --ignore-scripts --no-bin-links --no-package-lock --omit=dev
+
+nvim -es -u .config/nvim/init.vim -i NONE -c "CocUpdateSync" -c "qa"
