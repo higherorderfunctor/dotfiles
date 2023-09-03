@@ -56,7 +56,7 @@ dotfiles fetch --recurse-submodules -j8
 
 # update each submodule to HEAD of default branch
 # shellcheck disable=SC2016
-dotfiles submodule foreach 'dotfiles checkout $(git rev-parse --abbrev-ref HEAD); git submodule update --recursive'
+dotfiles submodule foreach 'dit checkout $(git rev-parse --abbrev-ref HEAD); git submodule update --recursive'
 
 .fzf/install --completion --key-bindings --no-update-rc
 
@@ -69,11 +69,14 @@ declare -a coc_extensions=(
 )
 
 mkdir -p ~/.config/coc/extensions
-cd ~/.config/coc/extensions
-if [ ! -f package.json ]
-then
-  echo '{"dependencies":{}}'> package.json
-fi
-npm install "${coc_extensions[@]}" --install-strategy=shallow --ignore-scripts --no-bin-links --no-package-lock --omit=dev
+
+(
+  cd ~/.config/coc/extensions
+  if [ ! -f package.json ]
+  then
+    echo '{"dependencies":{}}'> package.json
+  fi
+  npm install "${coc_extensions[@]}" --install-strategy=shallow --ignore-scripts --no-bin-links --no-package-lock --omit=dev
+)
 
 nvim -es -u ~/.config/nvim/init.vim -i NONE -c "CocUpdateSync" -c "qa"
