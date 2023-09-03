@@ -29,6 +29,7 @@ alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 dotfiles config user.name "Christopher Aubut"
 dotfiles config user.email "christopher@aubut.me"
+dotfiles config remote.origin.fetch "+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*"
 
 set -x
 
