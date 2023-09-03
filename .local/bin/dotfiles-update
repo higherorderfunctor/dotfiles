@@ -57,7 +57,7 @@ dotfiles fetch --recurse-submodules -j8
 
 # update each submodule to HEAD of default branch
 # shellcheck disable=SC2016
-dotfiles submodule foreach 'dit checkout $(git rev-parse --abbrev-ref HEAD); git submodule update --recursive'
+dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git submodule update --recursive'
 
 .fzf/install --completion --key-bindings --no-update-rc
 
