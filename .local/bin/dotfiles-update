@@ -60,8 +60,8 @@ dotfiles submodule foreach 'dotfiles checkout $(git rev-parse --abbrev-ref HEAD)
 
 .fzf/install --completion --key-bindings --no-update-rc
 
-nvim -es -u .config/nvim/init.vim -i NONE -c "PlugUpgrade" -c "qa"
-nvim -es -u .config/nvim/init.vim -i NONE -c "PlugUpdate" -c "qa"
+nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugUpgrade" -c "qa"
+nvim -es -u ~/.config/nvim/init.vim -i NONE -c "PlugUpdate" -c "qa"
 
 declare -a coc_extensions=(
   coc-json
@@ -76,4 +76,4 @@ then
 fi
 npm install "${coc_extensions[@]}" --install-strategy=shallow --ignore-scripts --no-bin-links --no-package-lock --omit=dev
 
-nvim -es -u .config/nvim/init.vim -i NONE -c "CocUpdateSync" -c "qa"
+nvim -es -u ~/.config/nvim/init.vim -i NONE -c "CocUpdateSync" -c "qa"
