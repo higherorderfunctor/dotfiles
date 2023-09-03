@@ -38,7 +38,7 @@ dotfiles submodule foreach --recursive git clean -fdx
 dotfiles submodule update --init --recursive
 
 # commit this file if changed
-dotfiles commit scripts/update -m 'chore: dotfiles-update updated' || true
+dotfiles commit .local/bin/dotfiles-update -m 'chore: dotfiles-update updated' || true
 
 # determine no pending changes that will be lost
 dotfiles update-index --refresh
