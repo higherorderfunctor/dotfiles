@@ -36,11 +36,11 @@ set clipboard=unnamedplus
 
 " mouse input
 set mouse=a
-if has("mouse_sgr")
-    set ttymouse=sgr
-else
-    set ttymouse=xterm2
-end
+" if has("mouse_sgr")
+"     set ttymouse=sgr
+" else
+"     set ttymouse=xterm2
+" end
 
 " spellcheck toggle
 :map <silent> <F8> :setlocal spell! spelllang=en_us<CR>
