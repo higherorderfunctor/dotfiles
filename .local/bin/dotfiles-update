@@ -71,6 +71,7 @@ dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
 if [ ! -f ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' ]; then
   curl -fLo ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' --create-dirs https://github.com/powerline/fonts/raw/master/DejaVuSansMono/DejaVu%20Sans%20Mono%20for%20Powerline.ttf
 fi
+exit
 
 # install bitwarden
 if [ ! -f ~/.local/bin/bitwarden ]; then
