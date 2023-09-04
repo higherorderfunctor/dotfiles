@@ -1,0 +1,135 @@
+#!/bin/bash
+
+set -euETo pipefail
+shopt -s inherit_errexit
+
+print_error() {
+  >&2 echo -e "\n\033[1;31mError: $1\033[0m"
+  exit 1
+}
+
+echo -en "\npassword: "
+read -sr password
+echo ""
+
+if [ -z "${1:-}" ]; then
+  print_error "COMMAND not specified"
+fi
+
+if [ -z "${2:-}" ]; then
+  print_error "VAULT not specified"
+fi
+
+mount-local (){
+  mkdir -p ~/.local/share/rclone/mnt/"${1^}" && rclone mount -v \
+    --password-command "echo $password" \
+    --daemon \
+    --progress \
+    --stats 5s \
+    --transfers 32 \
+    --vfs-cache-mode full \
+    crypt-"$1": ~/.local/share/rclone/mnt/"${1^}" \
+    && xdg-open ~/.local/share/rclone/mnt/"${1^}"
+}
+
+mount-remote (){
+  mkdir -p ~/.local/share/rclone/mnt/"${1^}" && rclone mount -v \
+    --password-command "echo $password" \
+    --daemon \
+    --progress \
+    --stats 5s \
+    --transfers 32 \
+    --vfs-cache-mode full \
+    crypt-b2-"$1": ~/.local/share/rclone/mnt/"${1^}" \
+    && xdg-open ~/.local/share/rclone/mnt/"${1^}"
+}
+
+unmount() {
+  fusermount -u ~/.local/share/rclone/mnt/"${1^}"
+}
+
+force-umount() {
+  fusermount -uz ~/.local/share/rclone/mnt/"${1^}"
+}
+
+check-remote() {
+  rclone sync --password-command "echo $password" --transfers 32 -u crypt-b2-"$1": crypt-"$1": --verbose --dry-run
+}
+
+pull() {
+  rclone sync --password-command "echo $password" --transfers 32 -u b2:"$USER"-b2-"$1" ~/Backups/"${1^}" --verbose
+}
+
+check-local() {
+  rclone sync --password-command "echo $password" --transfers 32 -u crypt-"$1": crypt-b2-"$1": --verbose --dry-run
+}
+
+push() {
+  rclone sync --password-command "echo $password" --transfers 32 -u ~/Backups/"${1^}" b2:"$USER"-b2-"$1" --verbose
+}
+
+case $1 in
+  mount-local) mount-local "${@:2}";;
+  mount-remote) mount-remote "${@:2}";;
+  unmount) unmount "${@:2}";;
+  force-unmount) force-unmount "${@:2}";;
+  check-remote) check-remote "${@:2}";;
+  pull) pull "${@:2}";;
+  check-local) check-local "${@:2}";;
+  push) push "${@:2}";;
+  *) print_error "Unknown COMMAND: '$1'";;
+esac
+
+# do_mount() {
+#   check_vault "$@"
+#   mkdir -p "$HOME/Backups/${1^}"
+#   echo -en "\nrclone config password: "
+#   read -sr password
+#   echo -e "\n\n=> checking no local changes\n"
+#   out=$(rclone sync --password-command "echo $password" -u "crypt-$1:" "crypt-b2-$1:" --verbose --dry-run 2>&1 && echo "0" || echo "1")
+#   if [[ "${out##*$'\n'}" != "0" ]]; then
+#      print_error "command failed\n\n${out%"${out##*$'\n'}"}"
+#   fi
+#   out=$(echo "$out" | grep Skipped && echo "0" || echo "1")
+#   if [[ "${out##*$'\n'}" == "0" ]]; then
+#      print_error "unsynced local files\n\n${out%"${out##*$'\n'}"}"
+#   fi
+#   echo "passed"
+#   echo -e "\n=> syncing remote changes\n"
+#   rclone sync --password-command "echo $password" -u "b2:$USER-b2-$1" "$HOME/Backups/${1^}" --verbose
+#   echo -e "=> mounting: ${1^}"
+#   mkdir -p "$HOME/.local/share/rclone/mnt/${1^}" && rclone mount -v \
+#     --password-command "echo $password" \
+#     --daemon \
+#     --progress \
+#     --stats 5s \
+#     --transfers 32 \
+#     --vfs-cache-mode full \
+#     "crypt-$1:" "$HOME/.local/share/rclone/mnt/${1^}"
+#   xdg-open "$HOME/.local/share/rclone/mnt/${1^}"
+# }
+#
+# do_umount() {
+#   check_vault "$@"
+#   echo -e "=> unmounting ${1^}\n\npassed"
+#   fusermount -u ~/.local/share/rclone/mnt/"${1^}"
+# }
+#
+# do_backup() {
+#   check_vault "$@"
+#   mkdir -p "$HOME/Backups/${1^}"
+#   echo -en "\npassword: "
+#   read -sr password
+#   echo -e "\n\n=> checking no remote changes\n"
+#   out=$(rclone sync --password-command "echo $password" -u "crypt-b2-$1:" "crypt-$1:" --verbose --dry-run 2>&1 && echo "0" || echo "1")
+#   if [[ "${out##*$'\n'}" != "0" ]]; then
+#      print_error "command failed\n\n${out%"${out##*$'\n'}"}"
+#   fi
+#   out=$(echo "$out" | grep Skipped && echo "0" || echo "1")
+#   if [[ "${out##*$'\n'}" == "0" ]]; then
+#      print_error "unsynced remote files\n\n${out%"${out##*$'\n'}"}"
+#   fi
+#   echo "passed"
+#   echo -e "\n=> syncing local changes\n"
+#   rclone sync --password-command "echo $password" -u "$HOME/Backups/${1^}" "b2:$USER-b2-$1"  --verbose
+# }
