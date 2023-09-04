@@ -29,7 +29,7 @@ declare -a packages=(
 PATH=".local/bin:$PATH"
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
-dotfiles config --global user.name "Christopher Aubut"
+# dotfiles config --global user.name "Christopher Aubut"
 dotfiles config user.email "christopher@aubut.me"
 dotfiles config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 dotfiles config --local status.showUntrackedFiles no
@@ -62,6 +62,15 @@ dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git
 
 dotfiles commit -am 'chore: submodules updated' || true
 dotfiles push origin main
+
+## setup terminal
+dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
+# dconf dump /org/gnome/terminal/ > .config/gnome-terminal/gnome-terminal.conf
+
+#mkdir -p ~/.local/share/fonts
+if [ ! -f ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' ]; then
+  curl -fLo ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' --create-dirs https://github.com/powerline/fonts/raw/master/DejaVuSansMono/DejaVu%20Sans%20Mono%20for%20Powerline.ttf
+fi
 
 # install bitwarden
 if [ ! -f ~/.local/bin/bitwarden ]; then
