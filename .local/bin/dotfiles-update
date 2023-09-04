@@ -62,6 +62,12 @@ dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git
 dotfiles commit -am 'chore: submodules updated' || true
 dotfiles push origin main
 
+# install bitwarden
+if [ ! -f ~/.local/bin/bitwarden ]; then
+  curl -fLo 'https://func.bitwarden.com/api/dl/?app=desktop&platform=linux'
+  chmod u+x ~/.local/bin/bitwarden
+fi
+
 # install or upgrade nvim
 curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/download/nvim.appimage || true
 chmod u+x ~/.local/bin/nvim
