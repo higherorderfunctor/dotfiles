@@ -71,6 +71,7 @@ fi
 curl -fLo ~/.local/bin/bw.zip --create-dirs 'https://func.bitwarden.com/api/dl/?app=cli&platform=linux'
 (
   cd ~/.local/bin
+  unzip -o bw.zip
   rm bw.zip
   chmod u+x bw
 )
