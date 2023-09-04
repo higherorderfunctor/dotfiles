@@ -17,3 +17,11 @@ dotfiles checkout main
 ```console
 dotfiles-update
 ```
+
+## Unlocking Rclone with Bitwarden
+
+```console
+. /dev/fd/3 3<<EOF
+$(vault unlock)
+EOF
+```

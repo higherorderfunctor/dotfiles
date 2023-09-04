@@ -8,19 +8,55 @@ print_error() {
   exit 1
 }
 
+declare -a NON_VAULT_COMMANDS=(
+  config
+  unlock
+)
+
 if [ -z "${1:-}" ]; then
   print_error "COMMAND not specified"
 fi
 
-if [ "$1" != "config" ] && [ -z "${2:-}" ]; then
+if [[ ! ${NON_VAULT_COMMANDS[*]} =~ $1 ]] && [ -z "${2:-}" ]; then
   print_error "VAULT not specified"
 fi
 
-echo -en "\npassword: "
-read -sr password
-echo ""
+if [[ "$1" == "unlock" ]]; then
+  if [[ "$(bw status | jq -r '.status')" == "unauthenticated" ]]; then
+    SESSION="$(bw login)"
+    echo "$SESSION" | sed -nr 's/^\$ export (.*)$/export \1/p'
+  fi
+  if [[ "$(bw status | jq -r '.status')" == "locked" ]]; then
+    SESSION="$(bw unlock) "
+    echo "$SESSION" | sed -nr 's/^\$ export (.*)$/export \1/p'
+  fi
+  exit
+fi
 
-export RCLONE_PASSWORD_COMMAND="echo $password" # TODO bitwarden
+if [[ "$(bw status | jq -r '.status')" != "unlocked" ]]; then
+  print_error "vault not unlocked"
+fi
+
+# sync bw once a day
+bw_last_sync="$(date -d "$(bw status | jq -r '.lastSync')" +%s)"
+if [ "$bw_last_sync" -le "$(date -d "yesterday" +%s)" ]; then
+  bw sync
+  bw_rclone_conf_last_revision="$(date -d "$(bw get item 'rclone - config' | jq -r '.revisionDate')" +%s)"
+  rclone_conf_last_revision="$(date -r ~/.config/rclone/rclone.conf +%s)"
+  # test if rclone.conf has been updated in bw
+  if [ ! -f ~/.config/rclone/rclone.conf ] || [ "$bw_rclone_conf_last_revision" -ge "$rclone_conf_last_revision" ] ; then
+    # load rclone.conf from bw
+    bw get attachment rclone.conf --itemid "$(bw get item 'rclone - config' | jq -r '.id')" --output ~/.config/rclone/rclone.conf
+    chmod 600 ~/.config/rclone/rclone.conf
+  fi
+fi
+
+# echo -en "\npassword: "
+# read -sr password
+# echo ""
+
+RCLONE_PASSWORD_COMMAND="echo $(bw get password 'rclone - config')"
+export RCLONE_PASSWORD_COMMAND
 export RCLONE_VERBOSE=1
 export RCLONE_STATS=5s
 RCLONE_ARGS=(--transfers 32 --progress)
