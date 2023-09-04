@@ -64,9 +64,16 @@ dotfiles push origin main
 
 # install bitwarden
 if [ ! -f ~/.local/bin/bitwarden ]; then
-  curl -fLo 'https://func.bitwarden.com/api/dl/?app=desktop&platform=linux'
+  curl -fLo ~/.local/bin/bitwarden --create-dirs 'https://func.bitwarden.com/api/dl/?app=desktop&platform=linux'
   chmod u+x ~/.local/bin/bitwarden
 fi
+
+curl -fLo ~/.local/bin/bw.zip --create-dirs 'https://func.bitwarden.com/api/dl/?app=cli&platform=linux'
+(
+  cd ~/.local/bin
+  rm bw.zip
+  chmod u+x bw
+)
 
 # install or upgrade nvim
 curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/download/nvim.appimage || true

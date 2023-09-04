@@ -8,75 +8,101 @@ print_error() {
   exit 1
 }
 
-echo -en "\npassword: "
-read -sr password
-echo ""
-
 if [ -z "${1:-}" ]; then
   print_error "COMMAND not specified"
 fi
 
-if [ -z "${2:-}" ]; then
+if [ "$1" != "config" ] && [ -z "${2:-}" ]; then
   print_error "VAULT not specified"
 fi
 
+echo -en "\npassword: "
+read -sr password
+echo ""
+
+export RCLONE_PASSWORD_COMMAND="echo $password" # TODO bitwarden
+export RCLONE_VERBOSE=1
+export RCLONE_STATS=5s
+RCLONE_ARGS=(--transfers 32 --progress)
+
 mount-local (){
-  mkdir -p ~/.local/share/rclone/mnt/"${1^}" && rclone mount -v \
-    --password-command "echo $password" \
+  mkdir -p ~/.local/share/rclone/mnt/"$1" \
+  && rclone mount \
+    "${RCLONE_ARGS[@]}" \
+    "${@:2}" \
     --daemon \
     --progress \
-    --stats 5s \
-    --transfers 32 \
     --vfs-cache-mode full \
-    crypt-"$1": ~/.local/share/rclone/mnt/"${1^}" \
-    && xdg-open ~/.local/share/rclone/mnt/"${1^}"
+    crypt-"$1": ~/.local/share/rclone/mnt/"$1" \
+  && xdg-open ~/.local/share/rclone/mnt/"$1"
 }
 
 mount-remote (){
-  mkdir -p ~/.local/share/rclone/mnt/"${1^}" && rclone mount -v \
-    --password-command "echo $password" \
+  mkdir -p ~/.local/share/rclone/mnt/b2-"$1" \
+  && rclone mount \
+    "${RCLONE_ARGS[@]}" \
+    "${@:2}" \
     --daemon \
     --progress \
-    --stats 5s \
-    --transfers 32 \
     --vfs-cache-mode full \
-    crypt-b2-"$1": ~/.local/share/rclone/mnt/"${1^}" \
-    && xdg-open ~/.local/share/rclone/mnt/"${1^}"
+    crypt-b2-"$1": ~/.local/share/rclone/mnt/b2-"$1" \
+  && xdg-open ~/.local/share/rclone/mnt/b2-"$1"
 }
 
-unmount() {
-  fusermount -u ~/.local/share/rclone/mnt/"${1^}"
+unmount-local() {
+  fusermount -u ~/.local/share/rclone/mnt/"$1"
 }
 
-force-umount() {
-  fusermount -uz ~/.local/share/rclone/mnt/"${1^}"
+unmount-remote() {
+  fusermount -u ~/.local/share/rclone/mnt/b2-"$1"
+}
+
+force-umount-local() {
+  fusermount -uz ~/.local/share/rclone/mnt/"$1"
+}
+
+force-umount-remote() {
+  fusermount -uz ~/.local/share/rclone/mnt/b2-"$1"
 }
 
 check-remote() {
-  rclone sync --password-command "echo $password" --transfers 32 -u crypt-b2-"$1": crypt-"$1": --verbose --dry-run
-}
-
-pull() {
-  rclone sync --password-command "echo $password" --transfers 32 -u b2:"$USER"-b2-"$1" ~/Backups/"${1^}" --verbose
+  rclone sync "${RCLONE_ARGS[@]}" -u crypt-b2-"$1": crypt-"$1": --dry-run
 }
 
 check-local() {
-  rclone sync --password-command "echo $password" --transfers 32 -u crypt-"$1": crypt-b2-"$1": --verbose --dry-run
+  rclone sync "${RCLONE_ARGS[@]}" -u crypt-"$1": crypt-b2-"$1": --dry-run
+}
+
+pull() {
+  rclone sync "${RCLONE_ARGS[@]}" -u b2:"$USER"-b2-"$1" ~/Backups/"${1^}"
 }
 
 push() {
-  rclone sync --password-command "echo $password" --transfers 32 -u ~/Backups/"${1^}" b2:"$USER"-b2-"$1" --verbose
+  rclone sync "${RCLONE_ARGS[@]}" -u ~/Backups/"${1^}" b2:"$USER"-b2-"$1"
+}
+
+copy-from-remote() {
+  rclone copy "${RCLONE_ARGS[@]}" -u b2:"$USER"-b2-"$1" ~/Backups/"${1^}"
+}
+
+copy-from-local() {
+  rclone copy "${RCLONE_ARGS[@]}" -u ~/Backups/"${1^}" b2:"$USER"-b2-"$1"
 }
 
 case $1 in
+  config) rclone config "${@:2}";;
   mount-local) mount-local "${@:2}";;
   mount-remote) mount-remote "${@:2}";;
-  unmount) unmount "${@:2}";;
-  force-unmount) force-unmount "${@:2}";;
+  unmount-local) unmount-local "${@:2}";;
+  unmount-remote) unmount-remote "${@:2}";;
+  force-unmount-local) force-unmount-local "${@:2}";;
+  force-unmount-remote) force-unmount-remote "${@:2}";;
   check-remote) check-remote "${@:2}";;
-  pull) pull "${@:2}";;
   check-local) check-local "${@:2}";;
+  pull) pull "${@:2}";;
   push) push "${@:2}";;
+  copy-from-remote) copy-from-remote "${@:2}";;
+  copy-from-local) copy-from-local "${@:2}";;
   *) print_error "Unknown COMMAND: '$1'";;
 esac
 
