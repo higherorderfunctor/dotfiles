@@ -68,8 +68,8 @@ dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
 # dconf dump /org/gnome/terminal/ > .config/gnome-terminal/gnome-terminal.conf
 
 #mkdir -p ~/.local/share/fonts
-if [ ! -f "$HOME/.local/share/fonts/DejaVu Sans Mono for Powerline.ttf" ]; then
-  curl -fLo "$HOME/.local/share/fonts/DejaVu Sans Mono for Powerline.ttf" --create-dirs https://github.com/powerline/fonts/raw/master/DejaVuSansMono/DejaVu%20Sans%20Mono%20for%20Powerline.ttf
+if [ ! -f ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' ]; then
+  curl -fLo ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' --create-dirs https://github.com/powerline/fonts/raw/master/DejaVuSansMono/DejaVu%20Sans%20Mono%20for%20Powerline.ttf
 fi
 exit
 
