@@ -63,15 +63,21 @@ dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git
 dotfiles commit -am 'chore: submodules updated' || true
 dotfiles push origin main
 
-## gnome-terminal
-dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
-# dconf dump /org/gnome/terminal/ > .config/gnome-terminal/gnome-terminal.conf
 
-#mkdir -p ~/.local/share/fonts
+## gnome-terminal
+
+# install font
 if [ ! -f ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' ]; then
   curl -fLo ~/.local/share/fonts/'DejaVu Sans Mono for Powerline.ttf' --create-dirs https://github.com/powerline/fonts/raw/master/DejaVuSansMono/DejaVu%20Sans%20Mono%20for%20Powerline.ttf
   fc-cache -f -v
 fi
+
+# load config
+dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
+
+# save config
+# dconf dump /org/gnome/terminal/ > .config/gnome-terminal/gnome-terminal.conf
+
 
 ## firefox (snap - yuck need to switch)
 curl -fLo "$(find ~/snap/firefox/common/.mozilla/firefox/ -name '*\.default')"/user.js \
