@@ -25,8 +25,7 @@ if [[ "$1" == "unlock" ]]; then
   if [[ "$(bw status | jq -r '.status')" == "unauthenticated" ]]; then
     SESSION="$(bw login)"
     echo "$SESSION" | sed -nr 's/^\$ export (.*)$/export \1/p'
-  fi
-  if [[ "$(bw status | jq -r '.status')" == "locked" ]]; then
+  elif [[ "$(bw status | jq -r '.status')" == "locked" ]]; then
     SESSION="$(bw unlock) "
     echo "$SESSION" | sed -nr 's/^\$ export (.*)$/export \1/p'
   fi
@@ -41,14 +40,13 @@ fi
 bw_last_sync="$(date -d "$(bw status | jq -r '.lastSync')" +%s)"
 if [ "$bw_last_sync" -le "$(date -d "yesterday" +%s)" ]; then
   bw sync
-  bw_rclone_conf_last_revision="$(date -d "$(bw get item 'rclone - config' | jq -r '.revisionDate')" +%s)"
-  rclone_conf_last_revision="$(date -r ~/.config/rclone/rclone.conf +%s)"
-  # test if rclone.conf has been updated in bw
-  if [ ! -f ~/.config/rclone/rclone.conf ] || [ "$bw_rclone_conf_last_revision" -ge "$rclone_conf_last_revision" ] ; then
-    # load rclone.conf from bw
-    bw get attachment rclone.conf --itemid "$(bw get item 'rclone - config' | jq -r '.id')" --output ~/.config/rclone/rclone.conf
-    chmod 600 ~/.config/rclone/rclone.conf
-  fi
+fi
+
+# test if rclone.conf has been updated in bw
+if [ ! -f ~/.config/rclone/rclone.conf ] || [ "$(date -d "$(bw get item 'rclone - config' | jq -r '.revisionDate')" +%s)" -ge "$(date -r ~/.config/rclone/rclone.conf +%s)" ] ; then
+  # load rclone.conf from bw
+  bw get attachment rclone.conf --itemid "$(bw get item 'rclone - config' | jq -r '.id')" --output ~/.config/rclone/rclone.conf
+  chmod 600 ~/.config/rclone/rclone.conf
 fi
 
 # echo -en "\npassword: "
