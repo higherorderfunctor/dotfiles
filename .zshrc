@@ -15,7 +15,7 @@ setopt HIST_IGNORE_SPACE
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export EDITOR="vim"
+export EDITOR="nvim"
 
 export PATH="$HOME/.local/bin:$PATH"
 
