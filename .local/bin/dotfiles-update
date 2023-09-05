@@ -29,9 +29,9 @@ declare -a packages=(
 PATH=".local/bin:$PATH"
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
-# dotfiles config --global user.name "Christopher Aubut"
-dotfiles config user.email "christopher@aubut.me"
-dotfiles config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+dotfiles config --global user.name "Christopher Aubut"
+dotfiles config --local user.email "christopher@aubut.me"
+dotfiles config --local remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 dotfiles config --local status.showUntrackedFiles no
 
 set -x
