@@ -3,6 +3,10 @@
 set -euETo pipefail
 shopt -s inherit_errexit
 
+print_msg() {
+  echo -e "\033[1;32m$1\033[0m"
+}
+
 print_error() {
   >&2 echo -e "\n\033[1;31mError: $1\033[0m"
   exit 1
@@ -22,13 +26,19 @@ if [[ ! ${NON_VAULT_COMMANDS[*]} =~ $1 ]] && [ -z "${2:-}" ]; then
 fi
 
 if [[ "$1" == "unlock" ]]; then
-  if [[ "$(bw status | jq -r '.status')" == "unauthenticated" ]]; then
+  if [[ "$(bw status | jq -r '.status')" == "unlocked" ]]; then
+    print_msg "Your vault is already unlocked.  Use 'exit' to lock."
+    exit
+  elif [[ "$(bw status | jq -r '.status')" == "unauthenticated" ]]; then
     SESSION="$(bw login)"
     echo "$SESSION" | sed -nr 's/^\$ export (.*)$/export \1/p'
   elif [[ "$(bw status | jq -r '.status')" == "locked" ]]; then
     SESSION="$(bw unlock) "
-    echo "$SESSION" | sed -nr 's/^\$ export (.*)$/export \1/p'
+    BW_SESSION=$(echo "$SESSION" | sed -nr 's/^\$ export BW_SESSION=(.*)$/\1/p')
   fi
+  print_msg "Your vault is unlocked.  Use 'exit' to lock."
+  BW_SESSION=$BW_SESSION $SHELL
+  BW_SESSION=$BW_SESSION bw lock
   exit
 fi
 

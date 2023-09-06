@@ -18,10 +18,18 @@ dotfiles checkout main
 dotfiles-update
 ```
 
-## Unlocking Rclone with Bitwarden
+## Backup
 
 ```console
-. /dev/fd/3 3<<EOF
-$(vault unlock)
-EOF
+# unlock (start new shell)
+vault unlock
+
+# lock
+exit
+
+# show file locks (slow)
+lsof | grep /path/to/mount
+
+# show file locks for common culprits (fast)
+lsof -p $(pidof xdg-document-portal) | grep /path/to/mount
 ```
