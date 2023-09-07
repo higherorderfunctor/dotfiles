@@ -15,9 +15,9 @@ update-zsh() (
   fi
 
   # install custom git completions
-  if [[ ! -f "$HOME/.oh-my-zsh/custom/completions/_git" ]]; then
+  if [[ ! -f "$HOME/.config/zsh/completions/_git" ]]; then
     print-msg "==> updating git completions\n"
-    curl -fLo "$HOME/.oh-my-zsh/custom/completions/_git" \
+    curl -fLo "$HOME/.config/zsh/completions/_git" \
     --create-dirs \
     "https://raw.githubusercontent.com/git/git/v$(git --version | cut -d' ' -f3)/contrib/completion/git-completion.zsh"
   fi
