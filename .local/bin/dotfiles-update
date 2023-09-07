@@ -45,9 +45,12 @@ export DOTFILES_SECURE
 . "$HOME/Documents/dotfiles/src/_common"
 # shellcheck source="../../Documents/dotfiles/src/_zsh"
 . "$HOME/Documents/dotfiles/src/_zsh"
+# shellcheck source="../../Documents/dotfiles/src/_bitwarden"
+. "$HOME/Documents/dotfiles/src/_bitwarden"
 # shellcheck source="../../Documents/dotfiles/src/_rclone"
 . "$HOME/Documents/dotfiles/src/_rclone"
 # https://github.com/prettier/vim-prettier
+exit
 
 declare -a ppas=(
   ppa:mooltipass/moolticute
@@ -56,7 +59,6 @@ declare -a ppas=(
 declare -a packages=(
   jq
   moolticute
-  rclone
   shellcheck
   tmux
   wl-clipboard

@@ -2,8 +2,8 @@
 
 update-rclone-nightly() (
   print-msg "=> rclone\n"
-  if [ "$(date -r "$HOME/.local/bin/rclone" +%s)" -le "$(date -d "yesterday" +%s)" ]; then
-    print-msg "==> updating to nightly\n"
+  if [[ "$(date -r "$HOME/.local/bin/rclone" +%s)" -le "$(date -d "yesterday" +%s)" ]]; then
+    print-msg "==> updating\n"
 
     architecture=""
     case $(uname -m) in
