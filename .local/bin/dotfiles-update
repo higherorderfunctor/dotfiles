@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euETo pipefail
 shopt -s expand_aliases
@@ -19,7 +19,7 @@ while [[ $# -gt 0 ]]; do
       shift # past value
       ;;
     --*|-*)
-      echo "Unknown option $1"
+      echo "Unknown option '$1'"
       exit 1
       ;;
     *)
@@ -31,10 +31,23 @@ done
 
 export DOTFILES_SECURE
 
+# # define command which will be used when "nvim" is set as a merge tool
+# [mergetool "nvim"]
+#   cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
+# # set "nvim" as tool for merging
+# [merge]
+#   tool = nvim
+# # automatically launch merge tool without displaying a prompt
+# [mergetool]
+#   prompt = false
+
+# shellcheck source="../../Documents/dotfiles/src/_common"
+. "$HOME/Documents/dotfiles/src/_common"
+# shellcheck source="../../Documents/dotfiles/src/_zsh"
+. "$HOME/Documents/dotfiles/src/_zsh"
 # shellcheck source="../../Documents/dotfiles/src/_rclone"
 . "$HOME/Documents/dotfiles/src/_rclone"
-
-exit
+# https://github.com/prettier/vim-prettier
 
 declare -a ppas=(
   ppa:mooltipass/moolticute
