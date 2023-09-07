@@ -1,9 +1,39 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-architecture=""
-case $(uname -m) in
-    i386 | i686)   architecture="386" ;;
-    x86_64)        architecture="amd64" ;;
-    arm)           dpkg --print-architecture | grep -q "arm64" && architecture="arm64" || architecture="arm" ;;
-    *)             echo "Unable to determine system architecture."; exit 1 ;;
-esac
+update-rclone-nightly() (
+  print-msg "=> rclone\n"
+  if [ "$(date -r "$HOME/.local/bin/rclone" +%s)" -le "$(date -d "yesterday" +%s)" ]; then
+    print-msg "==> updating to nightly\n"
+
+    architecture=""
+    case $(uname -m) in
+      i386 | i686)  architecture="386" ;;
+      x86_64)       architecture="amd64" ;;
+      # arm)          architecture="arm" ;;
+      # armv6l)       architecture="arm-v6" ;;
+      # armv7l)       architecture="arm-v7" ;;
+      # arm64)        architecture="arm64" ;;
+      *)            echo "Unable to determine system architecture."; exit 1 ;;
+    esac
+
+    (
+      set -x
+      curl -fLo "$HOME/rclone.zip" \
+        "https://beta.rclone.org/rclone-beta-latest-linux-$architecture.zip"
+      unzip -j "$HOME/rclone.zip" -d "$HOME/rclone"
+
+      mkdir -p "$HOME/.local/bin"
+      mv "$HOME/rclone/rclone" "$HOME/.local/bin"
+
+      mkdir -p "$HOME/.local/man"
+      mv "$HOME/rclone/rclone.1" "$HOME/.local/man"
+
+      rm -r rclone
+      rm rclone.zip
+    )
+  fi
+)
+
+if [[ "${DOTFILES_SECURE:-false}" == true ]]; then
+  update-rclone-nightly
+fi

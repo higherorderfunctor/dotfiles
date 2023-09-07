@@ -8,14 +8,17 @@ plugins=(
   git
 )
 
-# poetry
+# poetry plugin
 [[ -f ~/.local/bin/poetry ]] && plugins+=('poetry')
 
-# fzf
+# fzf plugin
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # oh-my-zsh
 source $ZSH/oh-my-zsh.sh
+
+# custom completions
+fpath=("$ZSH_CUSTOM/completions" $fpath)
 
 # vim bindings
 bindkey -v
