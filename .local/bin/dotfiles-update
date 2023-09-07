@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
 set -euETo pipefail
-shopt -s expand_aliases
 shopt -s inherit_errexit
+shopt -s expand_aliases
+
+# shellcheck source="../../Documents/dotfiles/src/_common"
+. "$HOME/Documents/dotfiles/src/_common"
 
 DOTFILES_SECURE=true
 
@@ -12,14 +15,14 @@ while [[ $# -gt 0 ]]; do
   case $1 in
     -s|--secure)
       DOTFILES_SECURE=true
-      shift # past value
+      shift
       ;;
     -S|--no-secure)
       DOTFILES_SECURE=false
-      shift # past value
+      shift
       ;;
     --*|-*)
-      echo "Unknown option '$1'"
+      echo "Unknown argument: '$1'"
       exit 1
       ;;
     *)
@@ -41,8 +44,6 @@ export DOTFILES_SECURE
 # [mergetool]
 #   prompt = false
 
-# shellcheck source="../../Documents/dotfiles/src/_common"
-. "$HOME/Documents/dotfiles/src/_common"
 # shellcheck source="../../Documents/dotfiles/src/_zsh"
 . "$HOME/Documents/dotfiles/src/_zsh"
 # shellcheck source="../../Documents/dotfiles/src/_bitwarden"

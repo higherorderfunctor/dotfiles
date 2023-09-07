@@ -3,3 +3,8 @@
 print-msg() {
   echo -en "\033[1;32m$1\033[0m"
 }
+
+print-error() {
+  >&2 echo -en "\033[1;31m$1\033[0m"
+  exit 1
+}

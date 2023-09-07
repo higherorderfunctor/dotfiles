@@ -28,8 +28,8 @@ update-rclone-nightly() (
       mkdir -p "$HOME/.local/man"
       mv "$HOME/rclone/rclone.1" "$HOME/.local/man"
 
-      rm -r rclone
-      rm rclone.zip
+      rm -r "$HOME/rclone"
+      rm "$HOME/rclone.zip"
     )
   fi
 )
