@@ -11,15 +11,18 @@ update-zsh() (
   # set shell
   if [[ "$(basename -- "$SHELL")" != "zsh" ]]; then
     print-msg "==> updating user shell\n"
-    chsh -s "$(command -v zsh)" "$USER"
+    (set -x && chsh -s "$(command -v zsh)" "$USER")
   fi
 
   # install custom git completions
   if [[ ! -f "$HOME/.config/zsh/completions/_git" ]]; then
     print-msg "==> updating git completions\n"
-    curl -fLo "$HOME/.config/zsh/completions/_git" \
-    --create-dirs \
-    "https://raw.githubusercontent.com/git/git/v$(git --version | cut -d' ' -f3)/contrib/completion/git-completion.zsh"
+    (
+      set -x
+      curl -fLo "$HOME/.config/zsh/completions/_git" \
+        --create-dirs \
+        "https://raw.githubusercontent.com/git/git/v$(git --version | cut -d' ' -f3)/contrib/completion/git-completion.zsh"
+    )
   fi
 )
 
