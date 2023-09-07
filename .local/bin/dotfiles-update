@@ -114,7 +114,7 @@ dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git
 .fzf/install --completion --key-bindings --no-update-rc
 
 dotfiles commit -am 'chore: submodules updated' || true
-dotfiles push origin main
+dotfiles push origin "$(dotfiles rev-parse --abbrev-ref HEAD)"
 
 
 ## gnome-terminal

@@ -3,9 +3,10 @@
 update-zsh() (
   print-msg "=> zsh\n"
 
-  # updating zsh
-  print-msg "==> updating oh-my-zsh\n"
-  "$HOME/.oh-my-zsh/tools/upgrade.sh"
+  # submodule update script should take care of this
+  # # updating zsh
+  # print-msg "==> updating oh-my-zsh\n"
+  # "$HOME/.oh-my-zsh/tools/upgrade.sh"
 
   # set shell
   if [[ "$(basename -- "$SHELL")" != "zsh" ]]; then
