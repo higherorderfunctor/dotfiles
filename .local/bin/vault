@@ -72,7 +72,7 @@ if [[ ! -f "$HOME/.config/rclone/rclone.conf" ]] || [[ "$(date -d "$(bw get item
 fi
 
 RCLONE_PASSWORD_COMMAND="echo $(bw get password "$BW_ITEM_NAME")"
-RCLONE_ARGS=(--transfers 32 --checkers 32 --progress)
+RCLONE_ARGS=(--transfers 32 --checkers 32)
 
 export RCLONE_PASSWORD_COMMAND
 export RCLONE_VERBOSE=1
@@ -131,27 +131,37 @@ config() {
 }
 
 mount-local () {
-  mkdir -p "$HOME/.local/share/rclone/mnt/${1^}" \
-  && rclone mount \
+  mkdir -p "$HOME/.local/share/rclone/mnt/${1^}"
+  rclone mount \
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
     --daemon \
     --progress \
     --vfs-cache-mode full \
-    "crypt-$1:" "$HOME/.local/share/rclone/mnt/${1^}" \
-  && xdg-open "$HOME/.local/share/rclone/mnt/${1^}"
+    "crypt-$1:" "$HOME/.local/share/rclone/mnt/${1^}"
+  if [[ -d "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID" ]]; then
+    rm -r "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID"
+  elif [[ ! -f "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID" ]]; then
+    touch "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID"
+  fi
+  xdg-open "$HOME/.local/share/rclone/mnt/${1^}"
 }
 
 mount-remote () {
-  mkdir -p "$HOME/.local/share/rclone/mnt/${1^} (remote)" \
-  && rclone mount \
+  mkdir -p "$HOME/.local/share/rclone/mnt/${1^} (remote)"
+  rclone mount \
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
     --daemon \
     --progress \
     --vfs-cache-mode full \
-    "crypt-remote-$1:" "$HOME/.local/share/rclone/mnt/${1^} (remote)" \
-  && xdg-open "$HOME/.local/share/rclone/mnt/${1^} (remote)"
+    "crypt-remote-$1:" "$HOME/.local/share/rclone/mnt/${1^} (remote)"
+  if [[ -d "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID" ]]; then
+    rm -r "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID"
+  elif [[ ! -f "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID" ]]; then
+    touch "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID"
+  fi
+  xdg-open "$HOME/.local/share/rclone/mnt/${1^} (remote)"
 }
 
 unmount-local() {
@@ -162,11 +172,11 @@ unmount-remote() {
   fusermount -u "$HOME/.local/share/rclone/mnt/${1^} (remote)"
 }
 
-force-umount-local() {
+force-unmount-local() {
   fusermount -uz "$HOME/.local/share/rclone/mnt/${1^}"
 }
 
-force-umount-remote() {
+force-unmount-remote() {
   fusermount -uz "$HOME/.local/share/rclone/mnt/${1^} (remote)"
 }
 
@@ -174,27 +184,23 @@ check() {
   RCLONE_VERBOSE=0 rclone cryptcheck \
     "${@:2}" \
     "${RCLONE_ARGS[@]}" \
-    --combined -u \
+    --combined -u --progress \
     "crypt-$1:" "crypt-remote-$1:"
 }
 
-sync() {
-  rclone bisync \
+sync-remote() {
+  rclone sync \
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
-    --resync \
-    "crypt-$1:" "crypt-remote-$1:" --resync
+    -u --progress \
+    "crypt-$1:" "crypt-remote-$1:"
 }
 
-sync-check() {
-  sync "$@" --dry-run
-}
-
-pull() {
-  rclone copy \
+sync-local() {
+  rclone sync \
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
-    -u \
+    -u --progress \
     "crypt-remote-$1:" "crypt-$1:"
 }
 
@@ -202,8 +208,33 @@ push() {
   rclone copy \
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
-    -u \
+    -u --progress \
     "crypt-$1:" "crypt-remote-$1:"
+}
+
+pull() {
+  rclone copy \
+    "${RCLONE_ARGS[@]}" \
+    "${@:2}" \
+    -u --progress \
+    "crypt-remote-$1:" "crypt-$1:"
+}
+
+show-hidden() {
+  vault rclone ls \
+    "${RCLONE_ARGS[@]}" \
+    "${@:2}" \
+    --b2-versions -q \
+    "crypt-remote-$1:" |
+    { grep --color -B1 -P 'v\d{4}-\d{2}-\d{2}-\d{6}-\d{3}(\.[.]*)?' || true; }
+}
+
+cleanup() {
+  rclone cleanup \
+    "${RCLONE_ARGS[@]}" \
+    "${@:2}" \
+    --progress \
+    "crypt-remote-$1:"
 }
 
 case $1 in
@@ -215,10 +246,12 @@ case $1 in
   force-unmount-local) force-unmount-local "${@:2}";;
   force-unmount-remote) force-unmount-remote "${@:2}";;
   check) check "${@:2}";;
-  sync-check) sync "${@:2}";;
-  sync) sync "${@:2}";;
-  pull) pull "${@:2}";;
+  sync-remote) sync-remote "${@:2}";;
+  sync-local) sync-local "${@:2}";;
   push) push "${@:2}";;
-  rclone) rclone "${@:2}";;
+  pull) pull "${@:2}";;
+  show-hidden) show-hidden "${@:2}";;
+  cleanup) cleanup "${@:2}";;
+  rclone) RCLONE_VERBOSE=0 rclone "$2" "${RCLONE_ARGS[@]}" "${@:3}";;
   *) print-error "Unknown COMMAND: '$1'\n";;
 esac
