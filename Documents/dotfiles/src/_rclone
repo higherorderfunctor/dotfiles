@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-update-rclone-nightly() (
-  print-msg "=> rclone\n"
+# nightly for proton drive support until in main
+update-rclone() (
   if [[ "$(date -r "$HOME/.local/bin/rclone" +%s)" -le "$(date -d "yesterday" +%s)" ]]; then
-    print-msg "==> updating\n"
+    print-info "==> updating\n"
 
     architecture=""
     case $(uname -m) in
-      i386 | i686)  architecture="386" ;;
+      # i386 | i686)  architecture="386" ;;
       x86_64)       architecture="amd64" ;;
       # arm)          architecture="arm" ;;
       # armv6l)       architecture="arm-v6" ;;
@@ -34,6 +34,4 @@ update-rclone-nightly() (
   fi
 )
 
-if [[ "${DOTFILES_SECURE:-false}" == true ]]; then
-  update-rclone-nightly
-fi
+run-module true x86_64

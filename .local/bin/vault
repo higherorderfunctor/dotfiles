@@ -11,47 +11,53 @@ BW_ITEM_NAME="rclone - config"
 declare -a NON_VAULT_COMMANDS=(
   config
   unlock
+  rclone
 )
 
-if [ -z "${1:-}" ]; then
-  print-error "\nCOMMAND not specified\n"
-fi
-
-if [[ ! ${NON_VAULT_COMMANDS[*]} =~ $1 ]] && [ -z "${2:-}" ]; then
-  print-error "\nVAULT not specified\n"
+if [ ! -v 1 ]; then
+  print-error "COMMAND not specified\n"
+elif [[ ! ${NON_VAULT_COMMANDS[*]} =~ $1 ]] && [[ ! -v 2 ]]; then
+  print-error "VAULT not specified\n"
 fi
 
 if [[ "$1" == "unlock" ]]; then
-  if [[ "$(bw status | jq -r '.status')" == "unlocked" ]]; then
-    print-msg "\nYour vault is already unlocked.  Use 'exit' to lock.\n"
+  BW_STATUS="$(bw status | jq -r '.status')"
+  if [[ -v BW_SESSION ]] && [[ "$BW_STATUS" == "unlocked" ]]; then
+    print-info "Your vault is already unlocked\n"
     exit
-  elif [[ "$(bw status | jq -r '.status')" == "unauthenticated" ]]; then
-    SESSION="$(bw login)"
-    echo "$SESSION" | sed -nr 's/^\$ export (.*)$/export \1/p'
-  elif [[ "$(bw status | jq -r '.status')" == "locked" ]]; then
-    SESSION="$(bw unlock) "
-    BW_SESSION=$(echo "$SESSION" | sed -nr 's/^\$ export BW_SESSION=(.*)$/\1/p')
   fi
-  print-msg "\nYour vault is unlocked.  Use 'exit' to lock.\n"
+  unset BW_SESSION
+  if [[ "$BW_STATUS" == "unauthenticated" ]]; then
+    SESSION="$(bw login)"
+  elif [[ "$BW_STATUS" == "locked" ]]; then
+    SESSION="$(bw unlock)"
+  else
+    print-error "Unknown vault status: '$BW_STATUS'"
+  fi
+  BW_SESSION=$(echo "$SESSION" | sed -nr 's/^\$ export BW_SESSION=(.*)$/\1/p')
+  if [[ "$(bw status | jq -r '.status')" == "unlocked" ]]; then
+    print-error "Failed to unlock your vault\n"
+  fi
+  print-info "Your vault is unlocked.  Use 'exit' to lock.\n"
   BW_SESSION=$BW_SESSION $SHELL
   BW_SESSION=$BW_SESSION bw lock
   exit
 fi
 
-if [[ "$(bw status | jq -r '.status')" != "unlocked" ]]; then
-  print-error "\nYour vault is not unlocked\n"
+if [[ ${NON_VAULT_COMMANDS[*]} =~ $1 ]] && [[ "$(bw status | jq -r '.status')" != "unlocked" ]]; then
+  print-error "Your vault is not unlocked\n"
 fi
 
-# sync bw once a day
+# force sync bw once an hour
 bw_last_sync="$(date -d "$(bw status | jq -r '.lastSync')" +%s)"
-if [ "$bw_last_sync" -le "$(date -d "yesterday" +%s)" ]; then
+if [ "$bw_last_sync" -le "$(date -d "1 hour ago" +%s)" ]; then
   bw sync
 fi
 
 # test if remote rclone.conf is newer than local rclone.conf
 if [[ ! -f "$HOME/.config/rclone/rclone.conf" ]] || [[ "$(date -d "$(bw get item "$BW_ITEM_NAME" | jq -r '.revisionDate')" +%s)" -gt "$(date -r "$HOME/.config/rclone/rclone.conf" "+%s")" ]] ; then
   # replace local rclone.conf with remote rclone.conf
-  print-msg "\nUpdating local 'rclone.conf'\n"
+  print-info "Updating local 'rclone.conf'\n"
   (
     set -x
     # backup local rclone.conf
@@ -66,18 +72,17 @@ if [[ ! -f "$HOME/.config/rclone/rclone.conf" ]] || [[ "$(date -d "$(bw get item
 fi
 
 RCLONE_PASSWORD_COMMAND="echo $(bw get password "$BW_ITEM_NAME")"
-RCLONE_ARGS=(--transfers 32 --progress)
+RCLONE_ARGS=(--transfers 32 --checkers 32 --progress)
 
 export RCLONE_PASSWORD_COMMAND
 export RCLONE_VERBOSE=1
-export RCLONE_STATS=5s
+# export RCLONE_STATS=5s
 
 config() {
   rclone config "$@"
   # test if rclone.conf has been updated locally
   if [[ -f "$HOME/.config/rclone/rclone.conf" ]] && [[ "$(date -d "$(bw get item "$BW_ITEM_NAME" | jq -r '.revisionDate')" +%s)" -lt "$(date -r "$HOME/.config/rclone/rclone.conf" "+%s")" ]] ; then
-    print-msg "\nUpdating remote 'rclone.conf'\n"
-    (
+    {
       set -x
       # backup remote rclone.conf locally
       bw get attachment rclone.conf \
@@ -86,6 +91,7 @@ config() {
       chmod 600 "$HOME/.config/rclone/rclone.remote.conf.bk"
       # only update if local is different than remote
       if ! cmp --silent "$HOME/.config/rclone/rclone.conf" "$HOME/.config/rclone/rclone.remote.conf.bk"; then
+        print-info "Updating remote 'rclone.conf'\n"
         # delete old backup remote rclone.conf
         if [[ -n "$(bw get item 'rclone - config' | jq -r 'first(.attachments | .[] | select(.fileName=="rclone.remote.conf.bk")) | .id')" ]]; then
           bw delete attachment \
@@ -116,9 +122,11 @@ config() {
         # sync
         bw sync
       else
-        print-msg "no changes\n"
+        print-info "\nNo changes to 'rclone.conf'\n"
       fi
-    )
+    }
+  else
+    print-info "\nNo changes to 'rclone.conf'\n"
   fi
 }
 
@@ -142,7 +150,7 @@ mount-remote () {
     --daemon \
     --progress \
     --vfs-cache-mode full \
-    "crypt-b2-$1:" "$HOME/.local/share/rclone/mnt/${1^} (remote)" \
+    "crypt-remote-$1:" "$HOME/.local/share/rclone/mnt/${1^} (remote)" \
   && xdg-open "$HOME/.local/share/rclone/mnt/${1^} (remote)"
 }
 
@@ -162,28 +170,40 @@ force-umount-remote() {
   fusermount -uz "$HOME/.local/share/rclone/mnt/${1^} (remote)"
 }
 
-check-remote() {
-  rclone sync "${RCLONE_ARGS[@]}" -u "crypt-b2-$1:" "crypt-$1": --dry-run
+check() {
+  RCLONE_VERBOSE=0 rclone cryptcheck \
+    "${@:2}" \
+    "${RCLONE_ARGS[@]}" \
+    --combined -u \
+    "crypt-$1:" "crypt-remote-$1:"
 }
 
-check-local() {
-  rclone sync "${RCLONE_ARGS[@]}" -u "crypt-$1:" "crypt-b2-$1": --dry-run
+sync() {
+  rclone bisync \
+    "${RCLONE_ARGS[@]}" \
+    "${@:2}" \
+    --resync \
+    "crypt-$1:" "crypt-remote-$1:" --resync
+}
+
+sync-check() {
+  sync "$@" --dry-run
 }
 
 pull() {
-  rclone sync "${RCLONE_ARGS[@]}" -u "b2:$USER-b2-$1" "$HOME/Backups/${1^}"
+  rclone copy \
+    "${RCLONE_ARGS[@]}" \
+    "${@:2}" \
+    -u \
+    "crypt-remote-$1:" "crypt-$1:"
 }
 
 push() {
-  rclone sync "${RCLONE_ARGS[@]}" -u "$HOME/Backups/${1^}" "b2:$USER-b2-$1"
-}
-
-copy-from-remote() {
-  rclone copy "${RCLONE_ARGS[@]}" -u "b2:$USER-b2-$1" "$HOME/Backups/${1^}"
-}
-
-copy-from-local() {
-  rclone copy "${RCLONE_ARGS[@]}" -u "$HOME/Backups/${1^}" "b2:$USER-b2-$1"
+  rclone copy \
+    "${RCLONE_ARGS[@]}" \
+    "${@:2}" \
+    -u \
+    "crypt-$1:" "crypt-remote-$1:"
 }
 
 case $1 in
@@ -194,65 +214,11 @@ case $1 in
   unmount-remote) unmount-remote "${@:2}";;
   force-unmount-local) force-unmount-local "${@:2}";;
   force-unmount-remote) force-unmount-remote "${@:2}";;
-  check-remote) check-remote "${@:2}";;
-  check-local) check-local "${@:2}";;
+  check) check "${@:2}";;
+  sync-check) sync "${@:2}";;
+  sync) sync "${@:2}";;
   pull) pull "${@:2}";;
   push) push "${@:2}";;
-  copy-from-remote) copy-from-remote "${@:2}";;
-  copy-from-local) copy-from-local "${@:2}";;
-  *) print_error "\nUnknown COMMAND: '$1'\n";;
+  rclone) rclone "${@:2}";;
+  *) print-error "Unknown COMMAND: '$1'\n";;
 esac
-
-# do_mount() {
-#   check_vault "$@"
-#   mkdir -p "$HOME/Backups/${1^}"
-#   echo -en "\nrclone config password: "
-#   read -sr password
-#   echo -e "\n\n=> checking no local changes\n"
-#   out=$(rclone sync --password-command "echo $password" -u "crypt-$1:" "crypt-b2-$1:" --verbose --dry-run 2>&1 && echo "0" || echo "1")
-#   if [[ "${out##*$'\n'}" != "0" ]]; then
-#      print_error "command failed\n\n${out%"${out##*$'\n'}"}"
-#   fi
-#   out=$(echo "$out" | grep Skipped && echo "0" || echo "1")
-#   if [[ "${out##*$'\n'}" == "0" ]]; then
-#      print_error "unsynced local files\n\n${out%"${out##*$'\n'}"}"
-#   fi
-#   echo "passed"
-#   echo -e "\n=> syncing remote changes\n"
-#   rclone sync --password-command "echo $password" -u "b2:$USER-b2-$1" "$HOME/Backups/${1^}" --verbose
-#   echo -e "=> mounting: ${1^}"
-#   mkdir -p "$HOME/.local/share/rclone/mnt/${1^}" && rclone mount -v \
-#     --password-command "echo $password" \
-#     --daemon \
-#     --progress \
-#     --stats 5s \
-#     --transfers 32 \
-#     --vfs-cache-mode full \
-#     "crypt-$1:" "$HOME/.local/share/rclone/mnt/${1^}"
-#   xdg-open "$HOME/.local/share/rclone/mnt/${1^}"
-# }
-#
-# do_umount() {
-#   check_vault "$@"
-#   echo -e "=> unmounting ${1^}\n\npassed"
-#   fusermount -u ~/.local/share/rclone/mnt/"${1^}"
-# }
-#
-# do_backup() {
-#   check_vault "$@"
-#   mkdir -p "$HOME/Backups/${1^}"
-#   echo -en "\npassword: "
-#   read -sr password
-#   echo -e "\n\n=> checking no remote changes\n"
-#   out=$(rclone sync --password-command "echo $password" -u "crypt-b2-$1:" "crypt-$1:" --verbose --dry-run 2>&1 && echo "0" || echo "1")
-#   if [[ "${out##*$'\n'}" != "0" ]]; then
-#      print_error "command failed\n\n${out%"${out##*$'\n'}"}"
-#   fi
-#   out=$(echo "$out" | grep Skipped && echo "0" || echo "1")
-#   if [[ "${out##*$'\n'}" == "0" ]]; then
-#      print_error "unsynced remote files\n\n${out%"${out##*$'\n'}"}"
-#   fi
-#   echo "passed"
-#   echo -e "\n=> syncing local changes\n"
-#   rclone sync --password-command "echo $password" -u "$HOME/Backups/${1^}" "b2:$USER-b2-$1"  --verbose
-# }

@@ -34,6 +34,7 @@ done
 
 export DOTFILES_SECURE
 
+# TODO
 # # define command which will be used when "nvim" is set as a merge tool
 # [mergetool "nvim"]
 #   cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
@@ -46,12 +47,13 @@ export DOTFILES_SECURE
 
 # shellcheck source="../../Documents/dotfiles/src/_zsh"
 . "$HOME/Documents/dotfiles/src/_zsh"
+# shellcheck source="../../Documents/dotfiles/src/_bitwarden_cli"
+. "$HOME/Documents/dotfiles/src/_bitwarden_cli"
 # shellcheck source="../../Documents/dotfiles/src/_bitwarden"
 . "$HOME/Documents/dotfiles/src/_bitwarden"
 # shellcheck source="../../Documents/dotfiles/src/_rclone"
 . "$HOME/Documents/dotfiles/src/_rclone"
-# https://github.com/prettier/vim-prettier
-exit
+# TODO https://github.com/prettier/vim-prettier for bash?
 
 declare -a ppas=(
   ppa:mooltipass/moolticute
@@ -91,6 +93,9 @@ dotfiles config --local remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*
 dotfiles config --local status.showUntrackedFiles no
 
 set -x
+
+# add new dotfiles
+dotfiles add "$HOME/Documents/dotfiles" -f
 
 # reset changes to submodules
 dotfiles submodule foreach --recursive git reset --hard

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+update-bitwarden-cli() (
+  # install binary
+  if [[ ! -f $HOME/.local/bin/bitwarden ]]; then
+    print-info "==> installing\n"
+    (
+      set -x
+      curl -fLo "$HOME/bw.zip" \
+        'https://func.bitwarden.com/api/dl/?app=cli&platform=linux'
+      unzip -o "$HOME/bw.zip"
+      rm "$HOME/bw.zip"
+      chmod u+x "$HOME/bw"
+      mv "$HOME/bw" "$HOME/.local/bin"
+    )
+  # update binary TODO https://github.com/higherorderfunctor/dotfiles/issues/20
+  elif [[ "$(date -r "$HOME/.local/bin/bw" +%s)" -le "$(date -d "yesterday" +%s)" ]]; then
+    print-info "==> updating\n"
+    (set -x && bw update)
+  fi
+)
+
+run-module true x86_64

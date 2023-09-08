@@ -1,22 +1,15 @@
 #!/usr/bin/env bash
 
 update-zsh() (
-  print-msg "=> zsh\n"
-
-  # submodule update script should take care of this
-  # # updating zsh
-  # print-msg "==> updating oh-my-zsh\n"
-  # "$HOME/.oh-my-zsh/tools/upgrade.sh"
-
   # set shell
   if [[ "$(basename -- "$SHELL")" != "zsh" ]]; then
-    print-msg "==> updating user shell\n"
+    print-info "==> updating user shell\n"
     (set -x && chsh -s "$(command -v zsh)" "$USER")
   fi
 
   # install custom git completions
   if [[ ! -f "$HOME/.config/zsh/completions/_git" ]]; then
-    print-msg "==> updating git completions\n"
+    print-info "==> updating git completions\n"
     (
       set -x
       curl -fLo "$HOME/.config/zsh/completions/_git" \
@@ -26,4 +19,4 @@ update-zsh() (
   fi
 )
 
-update-zsh
+run-module true x86_64
