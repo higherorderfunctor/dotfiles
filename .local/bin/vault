@@ -41,6 +41,16 @@ if [[ "$1" == "unlock" ]]; then
   print-info "Your vault is unlocked.  Use 'exit' to lock.\n"
   BW_SESSION=$BW_SESSION $SHELL
   BW_SESSION=$BW_SESSION bw lock
+  for dir in "$HOME/.local/share/rclone/mnt/"*; do
+    if mountpoint "$dir" >/dev/null 2>&1 ; then
+        dir_name=${dir%*/}
+      if fusermount -u "$dir"; then
+        print-info "Unmounted '${dir_name##*/}'\n"
+      else
+        print-warning "Failed to unmount '${dir_name##*/}'\n"
+      fi
+    fi
+  done
   exit
 fi
 
@@ -138,7 +148,7 @@ mount-local () {
     --daemon \
     --progress \
     --vfs-cache-mode full \
-    "crypt-$1:" "$HOME/.local/share/rclone/mnt/${1^}"
+    "crypt-local-$1:" "$HOME/.local/share/rclone/mnt/${1^}"
   if [[ -d "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID" ]]; then
     rm -r "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID"
   elif [[ ! -f "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID" ]]; then
@@ -184,8 +194,8 @@ check() {
   RCLONE_VERBOSE=0 rclone cryptcheck \
     "${@:2}" \
     "${RCLONE_ARGS[@]}" \
-    --combined -u --progress \
-    "crypt-$1:" "crypt-remote-$1:"
+    --combined - -u --progress \
+    "crypt-local-$1:" "crypt-remote-$1:"
 }
 
 sync-remote() {
@@ -193,7 +203,7 @@ sync-remote() {
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
     -u --progress \
-    "crypt-$1:" "crypt-remote-$1:"
+    "crypt-remote-$1:" "crypt-local-$1:"
 }
 
 sync-local() {
@@ -201,7 +211,7 @@ sync-local() {
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
     -u --progress \
-    "crypt-remote-$1:" "crypt-$1:"
+    "crypt-local-$1:" "crypt-remote-$1:"
 }
 
 push() {
@@ -209,7 +219,7 @@ push() {
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
     -u --progress \
-    "crypt-$1:" "crypt-remote-$1:"
+    "crypt-local-$1:" "crypt-remote-$1:"
 }
 
 pull() {
@@ -217,7 +227,7 @@ pull() {
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
     -u --progress \
-    "crypt-remote-$1:" "crypt-$1:"
+    "crypt-remote-$1:" "crypt-local-$1:"
 }
 
 show-hidden() {
