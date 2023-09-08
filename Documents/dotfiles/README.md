@@ -2,6 +2,8 @@
 
 ## Setup
 
+### Secure System
+
 ```console
 git clone --bare git@github.com:higherorderfunctor/dotfiles.git $HOME/.dotfiles
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
@@ -12,10 +14,29 @@ dotfiles checkout main
 # restart shell
 ```
 
+### Insecure System
+
+```console
+git clone --bare https://github.com/higherorderfunctor/dotfiles.git $HOME/.dotfiles
+alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+dotfiles checkout main
+
+.local/bin/dotfiles-update --no-secure
+
+# restart shell
+```
+
 ## Update
 
 ```console
+# secure system
 dotfiles-update
+
+# insecure system
+dotfiles-update --no-secure
+
+# update environment
+source "$HOME/.zshrc" && rehash
 ```
 
 ## Backup

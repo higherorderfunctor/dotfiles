@@ -1,10 +1,59 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euETo pipefail
-shopt -s expand_aliases
 shopt -s inherit_errexit
+shopt -s expand_aliases
 
-cd "$HOME"
+# shellcheck source="../../Documents/dotfiles/src/_common"
+. "$HOME/Documents/dotfiles/src/_common"
+
+DOTFILES_SECURE=true
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -s|--secure)
+      DOTFILES_SECURE=true
+      shift
+      ;;
+    -S|--no-secure)
+      DOTFILES_SECURE=false
+      shift
+      ;;
+    --*|-*)
+      echo "Unknown argument: '$1'"
+      exit 1
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift # past argument
+      ;;
+  esac
+done
+
+export DOTFILES_SECURE
+
+# TODO
+# # define command which will be used when "nvim" is set as a merge tool
+# [mergetool "nvim"]
+#   cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
+# # set "nvim" as tool for merging
+# [merge]
+#   tool = nvim
+# # automatically launch merge tool without displaying a prompt
+# [mergetool]
+#   prompt = false
+
+# shellcheck source="../../Documents/dotfiles/src/_zsh"
+. "$HOME/Documents/dotfiles/src/_zsh"
+# shellcheck source="../../Documents/dotfiles/src/_bitwarden_cli"
+. "$HOME/Documents/dotfiles/src/_bitwarden_cli"
+# shellcheck source="../../Documents/dotfiles/src/_bitwarden"
+. "$HOME/Documents/dotfiles/src/_bitwarden"
+# shellcheck source="../../Documents/dotfiles/src/_rclone"
+. "$HOME/Documents/dotfiles/src/_rclone"
+# TODO https://github.com/prettier/vim-prettier for bash?
 
 declare -a ppas=(
   ppa:mooltipass/moolticute
@@ -13,7 +62,6 @@ declare -a ppas=(
 declare -a packages=(
   jq
   moolticute
-  rclone
   shellcheck
   tmux
   wl-clipboard
@@ -46,6 +94,9 @@ dotfiles config --local status.showUntrackedFiles no
 
 set -x
 
+# add new dotfiles
+dotfiles add "$HOME/Documents/dotfiles" -f
+
 # reset changes to submodules
 dotfiles submodule foreach --recursive git reset --hard
 dotfiles submodule foreach --recursive git clean -fdx
@@ -71,7 +122,7 @@ dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git
 .fzf/install --completion --key-bindings --no-update-rc
 
 dotfiles commit -am 'chore: submodules updated' || true
-dotfiles push origin main
+dotfiles push origin "$(dotfiles rev-parse --abbrev-ref HEAD)"
 
 
 ## gnome-terminal
