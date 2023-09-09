@@ -99,11 +99,11 @@ dotfiles add "$HOME/Documents/dotfiles" -f
 
 # reset changes to submodules
 dotfiles submodule foreach --recursive git reset --hard
-dotfiles submodule foreach --recursive git clean -fdx
+dotfiles submodule foreach --recursive git clean -fdx --exclude="bin/fzf"
 dotfiles submodule update --init --recursive
 
 # commit this file if changed
-dotfiles commit ~/.local/bin/dotfiles-update "$HOME/Documents/dotfiles" -m 'chore: dotfiles-update updated' || true
+dotfiles commit ~/.local/bin/dotfiles-update "$HOME/Documents/dotfiles" -m 'chore(bot): dotfiles-update updated' || true
 
 # determine no pending changes that will be lost
 dotfiles update-index --refresh
@@ -119,9 +119,9 @@ dotfiles submodule update --init --recursive
 # shellcheck disable=SC2016
 dotfiles submodule foreach 'git checkout $(git rev-parse --abbrev-ref HEAD); git pull origin $(git rev-parse --abbrev-ref HEAD); git submodule update --recursive'
 
-.fzf/install --completion --key-bindings --no-update-rc
+"$HOME/.fzf/install" --completion --key-bindings --no-update-rc
 
-dotfiles commit -am 'chore: submodules updated' || true
+dotfiles commit -am 'chore(bot): submodules updated' || true
 dotfiles push origin "$(dotfiles rev-parse --abbrev-ref HEAD)"
 
 
