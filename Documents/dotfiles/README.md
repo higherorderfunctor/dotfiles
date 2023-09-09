@@ -51,6 +51,9 @@ exit
 # mount caching flag for remotes
 --vfs-cache-mode full
 
+# clear out vfs cache
+rm -rf .cache/rclone/vfs/*
+
 # show file locks (slow)
 lsof | grep /path/to/mount
 
