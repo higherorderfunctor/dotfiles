@@ -144,20 +144,6 @@ dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
 curl -fLo "$(find ~/snap/firefox/common/.mozilla/firefox/ -name '*\.default')"/user.js \
   https://github.com/arkenfox/user.js/raw/master/user.js
 
-# install bitwarden
-if [ ! -f ~/.local/bin/bitwarden ]; then
-  curl -fLo ~/.local/bin/bitwarden --create-dirs 'https://func.bitwarden.com/api/dl/?app=desktop&platform=linux'
-  chmod u+x ~/.local/bin/bitwarden
-fi
-
-curl -fLo ~/.local/bin/bw.zip --create-dirs 'https://func.bitwarden.com/api/dl/?app=cli&platform=linux'
-(
-  cd ~/.local/bin
-  unzip -o bw.zip
-  rm bw.zip
-  chmod u+x bw
-)
-
 # install or upgrade nvim
 curl -Lo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/download/nvim.appimage || true
 chmod u+x ~/.local/bin/nvim
