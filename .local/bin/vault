@@ -143,12 +143,11 @@ config() {
 
 mount-local () {
   mkdir -p "$HOME/.local/share/rclone/mnt/${1^}"
+  # --vfs-cache-mode full \
   rclone mount \
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
-    --daemon \
     --progress \
-    --vfs-cache-mode full \
     "crypt-local-$1:" "$HOME/.local/share/rclone/mnt/${1^}"
   if [[ -d "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID" ]]; then
     rm -r "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID"
@@ -160,12 +159,11 @@ mount-local () {
 
 mount-remote () {
   mkdir -p "$HOME/.local/share/rclone/mnt/${1^} (remote)"
+  # --vfs-cache-mode full \
   rclone mount \
     "${RCLONE_ARGS[@]}" \
     "${@:2}" \
-    --daemon \
     --progress \
-    --vfs-cache-mode full \
     "crypt-remote-$1:" "$HOME/.local/share/rclone/mnt/${1^} (remote)"
   if [[ -d "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID" ]]; then
     rm -r "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID"

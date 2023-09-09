@@ -48,9 +48,22 @@ vault unlock
 # lock
 exit
 
+# mount caching flag for remotes
+--vfs-cache-mode full
+
 # show file locks (slow)
 lsof | grep /path/to/mount
 
 # show file locks for common culprits (fast)
-lsof -p $(pidof xdg-document-portal) | grep /path/to/mount
+lsof -p $(pidof xdg-document-portal) | grep ~/.local/share/rclone/mnt/<MOUNT>
+
+# proton 2fa flag
+--protondrive-2fa=
+
+# proton replace failed upload
+--protondrive-replace-existing-draft=true
+
+# whole disk backup
+sudo dd if=/dev/<DISK> bs=128K status=progress |
+  gzip -c >~/.local/share/rclone/mnt/<MOUNT>/<PATH/TO/IMAGE>.gz
 ```
