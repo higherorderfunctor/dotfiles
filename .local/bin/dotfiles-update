@@ -109,6 +109,7 @@ dotfiles commit ~/.local/bin/dotfiles-update "$HOME/Documents/dotfiles" -m 'chor
 dotfiles update-index --refresh
 dotfiles diff-index --quiet HEAD -- || \
   echo "ERROR: commit or revert changes or they will be lost"
+exit
 
 # pull latest upstream changes to this branch
 dotfiles fetch -j8 origin
