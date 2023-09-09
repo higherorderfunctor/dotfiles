@@ -60,7 +60,8 @@ fi
 
 # force sync bw once an hour
 bw_last_sync="$(date -d "$(bw status | jq -r '.lastSync')" +%s)"
-if [ "$bw_last_sync" -le "$(date -d "1 hour ago" +%s)" ]; then
+if [[ "$bw_last_sync" -le "$(date -d "1 hour ago" +%s)" ]] || [[ ! -f "$HOME/.config/rclone/rclone.conf" ]]; then
+  mkdir -p "$HOME/.config/rclone"
   bw sync
 fi
 
@@ -71,7 +72,7 @@ if [[ ! -f "$HOME/.config/rclone/rclone.conf" ]] || [[ "$(date -d "$(bw get item
   (
     set -x
     # backup local rclone.conf
-    mv "$HOME/.config/rclone/rclone.conf" "$HOME/.config/rclone/rclone.local.conf.bk"
+    mv "$HOME/.config/rclone/rclone.conf" "$HOME/.config/rclone/rclone.local.conf.bk" || true
     # pull remote rclone.conf
     bw get attachment rclone.conf \
       --itemid "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')" \
