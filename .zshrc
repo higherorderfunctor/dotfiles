@@ -26,11 +26,11 @@ bindkey -v
 # history
 setopt HIST_IGNORE_SPACE
 
-# bitwarden
-eval "$(bw completion --shell zsh); compdef _bw bw;"
-
 # envs
 export PATH="$HOME/.local/bin:$PATH"
 export MANPATH="$HOME/.local/man:$MANPATH"
 export EDITOR="nvim"
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+# bitwarden
+eval "$(bw completion --shell zsh); compdef _bw bw;"
