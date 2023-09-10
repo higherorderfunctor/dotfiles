@@ -6,17 +6,26 @@ shopt -s inherit_errexit
 # shellcheck source="../../Documents/dotfiles/src/_common"
 . "$HOME/Documents/dotfiles/src/_common"
 
-BW_ITEM_NAME="rclone - config"
+BW_RCLONE_CONF=${BW_RCLONE_CONF:-"rclone - config"}
 
-declare -a NON_VAULT_COMMANDS=(
+declare -a NON_REMOTE_ACCESS_COMMANDS=(
   config
   unlock
   rclone
 )
 
+declare -a LOCATIONS=(
+  local
+  remote
+)
+
 if [ ! -v 1 ]; then
   print-error "COMMAND not specified\n"
-elif [[ ! ${NON_VAULT_COMMANDS[*]} =~ $1 ]] && [[ ! -v 2 ]]; then
+elif [[ ! ${NON_REMOTE_ACCESS_COMMANDS[*]} =~ $1 ]] && [[ ! -v 2 ]]; then
+  print-error "LOCATION not specified ('local' or 'remote')\n"
+elif [[ ! ${NON_REMOTE_ACCESS_COMMANDS[*]} =~ $1 ]] && [[ ! ${LOCATIONS[*]} =~ $2 ]]; then
+  print-error "LOCATION unknown: '$2'.  Must be 'local' or 'remote'.\n"
+elif [[ ! ${NON_REMOTE_ACCESS_COMMANDS[*]} =~ $1 ]] && [[ ! -v 3 ]]; then
   print-error "VAULT not specified\n"
 fi
 
@@ -51,22 +60,24 @@ if [[ "$1" == "unlock" ]]; then
       fi
     fi
   done
+  rm -rf .cache/rclone/vfs/*
   exit
 fi
 
-if [[ ${NON_VAULT_COMMANDS[*]} =~ $1 ]] && [[ "$(bw status | jq -r '.status')" != "unlocked" ]]; then
+if [[ ${NON_REMOTE_ACCESS_COMMANDS[*]} =~ $1 ]] && [[ "$(bw status | jq -r '.status')" != "unlocked" ]]; then
   print-error "Your vault is not unlocked\n"
 fi
 
 # force sync bw once an hour
 bw_last_sync="$(date -d "$(bw status | jq -r '.lastSync')" +%s)"
 if [[ "$bw_last_sync" -le "$(date -d "1 hour ago" +%s)" ]] || [[ ! -f "$HOME/.config/rclone/rclone.conf" ]]; then
+  print-info "Syncing credentials\n"
   mkdir -p "$HOME/.config/rclone"
   bw sync
 fi
 
 # test if remote rclone.conf is newer than local rclone.conf
-if [[ ! -f "$HOME/.config/rclone/rclone.conf" ]] || [[ "$(date -d "$(bw get item "$BW_ITEM_NAME" | jq -r '.revisionDate')" +%s)" -gt "$(date -r "$HOME/.config/rclone/rclone.conf" "+%s")" ]] ; then
+if [[ ! -f "$HOME/.config/rclone/rclone.conf" ]] || [[ "$(date -d "$(bw get item "$BW_RCLONE_CONF" | jq -r '.revisionDate')" +%s)" -gt "$(date -r "$HOME/.config/rclone/rclone.conf" "+%s")" ]] ; then
   # replace local rclone.conf with remote rclone.conf
   print-info "Updating local 'rclone.conf'\n"
   (
@@ -75,29 +86,29 @@ if [[ ! -f "$HOME/.config/rclone/rclone.conf" ]] || [[ "$(date -d "$(bw get item
     mv "$HOME/.config/rclone/rclone.conf" "$HOME/.config/rclone/rclone.local.conf.bk" || true
     # pull remote rclone.conf
     bw get attachment rclone.conf \
-      --itemid "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')" \
+      --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')" \
       --output "$HOME/.config/rclone/rclone.conf"
     chmod 600 "$HOME/.config/rclone/rclone.conf"
-    touch -d "$(date -Rd "$(bw get item "$BW_ITEM_NAME" | jq -r '.revisionDate')")" "$HOME/.config/rclone/rclone.conf"
+    touch -d "$(date -Rd "$(bw get item "$BW_RCLONE_CONF" | jq -r '.revisionDate')")" "$HOME/.config/rclone/rclone.conf"
   )
 fi
 
-RCLONE_PASSWORD_COMMAND="echo $(bw get password "$BW_ITEM_NAME")"
-RCLONE_ARGS=(--transfers 32 --checkers 32)
+NPROC=$(nproc --all)
+RCLONE_PASSWORD_COMMAND="echo $(bw get password "$BW_RCLONE_CONF")"
+RCLONE_ARGS=(--transfers "$((NPROC * 2))" --checkers "$((NPROC * 2))")
 
 export RCLONE_PASSWORD_COMMAND
-export RCLONE_VERBOSE=1
-# export RCLONE_STATS=5s
+export RCLONE_VERBOSE=${RCLONE_VERBOSE:-1}
 
 config() {
   rclone config "$@"
   # test if rclone.conf has been updated locally
-  if [[ -f "$HOME/.config/rclone/rclone.conf" ]] && [[ "$(date -d "$(bw get item "$BW_ITEM_NAME" | jq -r '.revisionDate')" +%s)" -lt "$(date -r "$HOME/.config/rclone/rclone.conf" "+%s")" ]] ; then
+  if [[ -f "$HOME/.config/rclone/rclone.conf" ]] && [[ "$(date -d "$(bw get item "$BW_RCLONE_CONF" | jq -r '.revisionDate')" +%s)" -lt "$(date -r "$HOME/.config/rclone/rclone.conf" "+%s")" ]] ; then
     {
       set -x
       # backup remote rclone.conf locally
       bw get attachment rclone.conf \
-        --itemid "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')" \
+        --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')" \
         --output "$HOME/.config/rclone/rclone.remote.conf.bk"
       chmod 600 "$HOME/.config/rclone/rclone.remote.conf.bk"
       # only update if local is different than remote
@@ -107,28 +118,28 @@ config() {
         if [[ -n "$(bw get item 'rclone - config' | jq -r 'first(.attachments | .[] | select(.fileName=="rclone.remote.conf.bk")) | .id')" ]]; then
           bw delete attachment \
           "$(bw get item 'rclone - config' | jq -r 'first(.attachments | .[] | select(.fileName=="rclone.remote.conf.bk")) | .id')" \
-          --itemid "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')"
+          --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
         fi
         # push new backup remote rclone.conf
         bw create attachment \
           --file "$HOME/.config/rclone/rclone.remote.conf.bk" \
-          --itemid "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')"
+          --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
 
         # delete remote rclone.conf
         bw delete attachment \
           "$(bw get item 'rclone - config' | jq -r 'first(.attachments | .[] | select(.fileName=="rclone.conf")) | .id')" \
-          --itemid "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')"
+          --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
         # push rclone.conf
         bw create attachment \
           --file "$HOME/.config/rclone/rclone.conf" \
-          --itemid "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')"
+          --itemid "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
 
         # force sync local and remote timestamps
         bw get item \
-          "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')" |
+          "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')" |
           bw encode |
-          bw edit item "$(bw get item "$BW_ITEM_NAME" | jq -r '.id')"
-        touch -d "$(date -Rd "$(bw get item "$BW_ITEM_NAME" | jq -r '.revisionDate')")" "$HOME/.config/rclone/rclone.conf"
+          bw edit item "$(bw get item "$BW_RCLONE_CONF" | jq -r '.id')"
+        touch -d "$(date -Rd "$(bw get item "$BW_RCLONE_CONF" | jq -r '.revisionDate')")" "$HOME/.config/rclone/rclone.conf"
 
         # sync
         bw sync
@@ -141,126 +152,84 @@ config() {
   fi
 }
 
-mount-local () {
-  mkdir -p "$HOME/.local/share/rclone/mnt/${1^}"
+mount() {
+  MOUNT_DIR="$HOME/.local/share/rclone/mnt/${2^}$([[ $1 == 'remote' ]] && echo ' (remote)' || echo '')"
+  mkdir -p "$MOUNT_DIR"
   # --vfs-cache-mode full \
   rclone mount \
     "${RCLONE_ARGS[@]}" \
-    "${@:2}" \
+    "${@:3}" \
     --progress \
-    "crypt-local-$1:" "$HOME/.local/share/rclone/mnt/${1^}"
-  if [[ -d "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID" ]]; then
-    rm -r "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID"
-  elif [[ ! -f "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID" ]]; then
-    touch "$HOME/.local/share/rclone/mnt/${1^}/.Trash-$UID"
+    "crypt-$1-$2:" "$MOUNT_DIR"
+  if [[ -d "$MOUNT_DIR/.Trash-$UID" ]]; then
+    rm -r "$MOUNT_DIR/.Trash-$UID"
+  elif [[ ! -f "$MOUNT_DIR/.Trash-$UID" ]]; then
+    touch "$MOUNT_DIR/.Trash-$UID"
   fi
-  xdg-open "$HOME/.local/share/rclone/mnt/${1^}"
+  xdg-open "$MOUNT_DIR"
 }
 
-mount-remote () {
-  mkdir -p "$HOME/.local/share/rclone/mnt/${1^} (remote)"
-  # --vfs-cache-mode full \
-  rclone mount \
-    "${RCLONE_ARGS[@]}" \
-    "${@:2}" \
-    --progress \
-    "crypt-remote-$1:" "$HOME/.local/share/rclone/mnt/${1^} (remote)"
-  if [[ -d "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID" ]]; then
-    rm -r "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID"
-  elif [[ ! -f "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID" ]]; then
-    touch "$HOME/.local/share/rclone/mnt/${1^} (remote)/.Trash-$UID"
-  fi
-  xdg-open "$HOME/.local/share/rclone/mnt/${1^} (remote)"
-}
-
-unmount-local() {
-  fusermount -u "$HOME/.local/share/rclone/mnt/${1^}"
-}
-
-unmount-remote() {
-  fusermount -u "$HOME/.local/share/rclone/mnt/${1^} (remote)"
-}
-
-force-unmount-local() {
-  fusermount -uz "$HOME/.local/share/rclone/mnt/${1^}"
-}
-
-force-unmount-remote() {
-  fusermount -uz "$HOME/.local/share/rclone/mnt/${1^} (remote)"
+unmount() {
+  MOUNT_DIR="$HOME/.local/share/rclone/mnt/${2^}$([[ $1 == 'remote' ]] && echo ' (remote)' || echo '')"
+  fusermount -u "${@:3}" "$MOUNT_DIR"
 }
 
 check() {
   RCLONE_VERBOSE=0 rclone cryptcheck \
-    "${@:2}" \
     "${RCLONE_ARGS[@]}" \
-    --combined - -u --progress \
-    "crypt-local-$1:" "crypt-remote-$1:"
+    "${@:3}" \
+    --differ - -u --progress \
+    "crypt-$1-$2:" "crypt-$([[ $1 == 'local' ]] && echo 'remote' || echo 'local')-$2:"
 }
 
-sync-remote() {
-  rclone sync \
-    "${RCLONE_ARGS[@]}" \
-    "${@:2}" \
-    -u --progress \
-    "crypt-remote-$1:" "crypt-local-$1:"
-}
-
-sync-local() {
-  rclone sync \
-    "${RCLONE_ARGS[@]}" \
-    "${@:2}" \
-    -u --progress \
-    "crypt-local-$1:" "crypt-remote-$1:"
-}
-
-push() {
+copy() {
+  dest="$([[ $1 == 'local' ]] && echo 'remote' || echo 'local')"
+  print-warning "Copying files from '$1' to '$dest'\n\nPress enter to continue or ^-d to abort"
+  read -r
   rclone copy \
     "${RCLONE_ARGS[@]}" \
-    "${@:2}" \
+    "${@:3}" \
     -u --progress \
-    "crypt-local-$1:" "crypt-remote-$1:"
+    "crypt-$1-$2:" "crypt-$dest-$2:"
 }
 
-pull() {
-  rclone copy \
+sync() {
+  dest="$([[ $1 == 'local' ]] && echo 'remote' || echo 'local')"
+  print-warning "Syncing files from '$1' to '$dest'\n\nPress enter to continue or ^-d to abort"
+  read -r
+  rclone sync \
     "${RCLONE_ARGS[@]}" \
-    "${@:2}" \
+    "${@:3}" \
     -u --progress \
-    "crypt-remote-$1:" "crypt-local-$1:"
+    "crypt-$1-$2:" "crypt-$dest-$2:"
 }
 
 show-hidden() {
   vault rclone ls \
     "${RCLONE_ARGS[@]}" \
-    "${@:2}" \
+    "${@:3}" \
     --b2-versions -q \
-    "crypt-remote-$1:" |
+    "crypt-$1-$2" |
     { grep --color -B1 -P 'v\d{4}-\d{2}-\d{2}-\d{6}-\d{3}(\.[.]*)?' || true; }
 }
 
-cleanup() {
+cleanup-hidden() {
   rclone cleanup \
     "${RCLONE_ARGS[@]}" \
-    "${@:2}" \
+    "${@:3}" \
     --progress \
-    "crypt-remote-$1:"
+    "crypt-$1-$2"
 }
 
 case $1 in
   config) config "${@:2}";;
-  mount-local) mount-local "${@:2}";;
-  mount-remote) mount-remote "${@:2}";;
-  unmount-local) unmount-local "${@:2}";;
-  unmount-remote) unmount-remote "${@:2}";;
-  force-unmount-local) force-unmount-local "${@:2}";;
-  force-unmount-remote) force-unmount-remote "${@:2}";;
+  mount) mount "${@:2}";;
+  unmount) unmount "${@:2}";;
   check) check "${@:2}";;
-  sync-remote) sync-remote "${@:2}";;
-  sync-local) sync-local "${@:2}";;
-  push) push "${@:2}";;
-  pull) pull "${@:2}";;
+  copy) copy "${@:2}";;
+  sync) sync "${@:2}";;
   show-hidden) show-hidden "${@:2}";;
-  cleanup) cleanup "${@:2}";;
+  cleanup-hidden) cleanup-hidden "${@:2}";;
   rclone) RCLONE_VERBOSE=0 rclone "$2" "${RCLONE_ARGS[@]}" "${@:3}";;
   *) print-error "Unknown COMMAND: '$1'\n";;
 esac

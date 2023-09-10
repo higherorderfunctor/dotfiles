@@ -41,25 +41,115 @@ source "$HOME/.zshrc" && rehash
 
 ## Backup
 
+Backup management is done with the custom `vault` command.  It is a wrapper around `rclone` with an encrypted `rclone.conf` for remotes of type `crypt`.  Credentials are managed through `bw`, the Bitwarden CLI.  The Bitwarden database is updated once an hour automatically when a `vault` command is run.  The Bitwarden item for `rclone` is set with the `BW_RCLONE_CONF` environment variable (default: `rclone - config`).
+
+The Bitwarden item also is used to store the latest `rclone.conf`.  During an update of the database, if `rclone.conf` is newer in Bitwarden, it syncs locally.  A backup of the local version is created locally before syncing at `~/.config/rclone/rclone.local.conf.bk`.
+
+The automations in the wrapper are intended to work with `rclone` remotes of type `crypt` named `crypt-<local|remote>-<VAULT>`.
+
+Parallelism is automatically set to `2 * $(nproc --all)`.
+
+### Unlock
+
+Prompts for Bitwarden credentials and starts a new shell.
+
 ```console
-# unlock (start new shell)
 vault unlock
+```
 
-# lock
+### Lock
+
+Destroys the Bitwarden session, unmounts any mounted file systems if able, and cleans up the VFS cache.
+
+```console
 exit
+```
 
-# mount caching flag for remotes
---vfs-cache-mode full
+### Configure
 
-# clear out vfs cache
-rm -rf .cache/rclone/vfs/*
+Launches `rclone config`.  If the config is updated, it creates a backup of the remote `rclone.conf` called `rclone.remote.conf.bk` both locally at `~/.config/rclone/rclone.remote.conf.bk` and on the Bitwarden item.
 
-# show file locks (slow)
+```console
+vault config
+```
+
+### Mount Vault
+
+Mounts a vault using FuseFS.
+
+```console
+# local vault
+vault mount local <VAULT>
+
+# remote vault
+vault mount remote <VAULT> --vfs-cache-mode full
+```
+
+If mounted using daemon mode, `xdg-open` will open the mount point.
+
+```console
+# local vault
+vault mount local <VAULT> --daemon
+
+# remote vault
+vault mount remote <VAULT> --daemon --vfs-cache-mode full
+```
+
+Unmounting can be performed by killing the process (non-daemon), manually (daemon), or exiting the unlocked shell.
+
+```console
+vault unmount <local|remote> <VAULT>
+```
+
+Unmounting will fail if a file is open.  This can be debugged with `lsof`.
+
+```console
 lsof | grep /path/to/mount
+```
 
-# show file locks for common culprits (fast)
-lsof -p $(pidof xdg-document-portal) | grep ~/.local/share/rclone/mnt/<MOUNT>
+Unmounting can also be forced.
 
+```console
+vault unmount <local|remote> <VAULT> -z
+```
+
+### Check Differences
+
+Check for differences between local and remote for a given vault.  This is slower compared to using `--dry-run` with `copy` or `sync` (see below).
+
+```console
+vault check local <VAULT>
+```
+
+### Sync Files
+
+Sync files between local and remote.  This script does not currently handle three-way merges so tread carefully.
+
+Copy new or updated files between local and remote.
+
+```console
+# local to remote
+vault copy local <VAULT>
+
+# remote to local
+vault copy remote <VAULT>
+```
+
+Copy new or updated files between local and remote.  Deletes any files not in the source vault.
+
+```console
+# local to remote
+vault copy local <VAULT>
+
+# remote to local
+vault copy remote <VAULT>
+```
+
+### Other
+
+These commands/flags are not well tested yet.
+
+```console
 # proton 2fa flag
 --protondrive-2fa=
 
