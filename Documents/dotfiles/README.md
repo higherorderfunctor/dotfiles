@@ -101,12 +101,6 @@ Unmounting can be performed by killing the process (non-daemon), manually (daemo
 vault unmount <local|remote> <VAULT>
 ```
 
-Unmounting will fail if a file is open.  This can be debugged with `lsof`.
-
-```console
-lsof | grep /path/to/mount
-```
-
 Unmounting can also be forced.
 
 ```console
@@ -139,10 +133,10 @@ Copy new or updated files between local and remote.  Deletes any files not in th
 
 ```console
 # local to remote
-vault copy local <VAULT>
+vault sync local <VAULT>
 
 # remote to local
-vault copy remote <VAULT>
+vault sync remote <VAULT>
 ```
 
 ### Other
@@ -158,5 +152,5 @@ These commands/flags are not well tested yet.
 
 # whole disk backup
 sudo dd if=/dev/<DISK> bs=128K status=progress |
-  gzip -c >~/.local/share/rclone/mnt/<MOUNT>/<PATH/TO/IMAGE>.gz
+  gzip -c > ~/.local/share/rclone/mnt/<MOUNT>/<PATH/TO/IMAGE>.gz
 ```

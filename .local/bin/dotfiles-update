@@ -60,6 +60,7 @@ declare -a ppas=(
 )
 
 declare -a packages=(
+  bindfs
   jq
   moolticute
   shellcheck

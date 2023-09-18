@@ -12,6 +12,7 @@ declare -a NON_REMOTE_ACCESS_COMMANDS=(
   config
   unlock
   rclone
+  imap-backup
 )
 
 declare -a LOCATIONS=(
@@ -50,6 +51,7 @@ if [[ "$1" == "unlock" ]]; then
   print-info "Your vault is unlocked.  Use 'exit' to lock.\n"
   BW_SESSION=$BW_SESSION $SHELL
   BW_SESSION=$BW_SESSION bw lock
+  # TODO deep search
   for dir in "$HOME/.local/share/rclone/mnt/"*; do
     if mountpoint "$dir" >/dev/null 2>&1 ; then
         dir_name=${dir%*/}
@@ -152,26 +154,87 @@ config() {
   fi
 }
 
+get-mount-dir() {
+  echo "$HOME/.local/share/rclone/mnt/${2^}$([[ $1 == 'remote' ]] && echo ' (remote)' || echo '')"
+}
+
 mount() {
-  MOUNT_DIR="$HOME/.local/share/rclone/mnt/${2^}$([[ $1 == 'remote' ]] && echo ' (remote)' || echo '')"
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
   mkdir -p "$MOUNT_DIR"
-  # --vfs-cache-mode full \
-  rclone mount \
-    "${RCLONE_ARGS[@]}" \
-    "${@:3}" \
-    --progress \
-    "crypt-$1-$2:" "$MOUNT_DIR"
+  if mountpoint "$MOUNT_DIR" >/dev/null 2>&1 ; then
+    print-warning "\n  vault already mounted: '${MOUNT_DIR}'\n\n"
+  else
+    rclone mount \
+      "${RCLONE_ARGS[@]}" \
+      "${@:3}" \
+      --progress \
+      "crypt-$1-$2:" "$MOUNT_DIR"
+    sleep 1
+  fi
   if [[ -d "$MOUNT_DIR/.Trash-$UID" ]]; then
     rm -r "$MOUNT_DIR/.Trash-$UID"
-  elif [[ ! -f "$MOUNT_DIR/.Trash-$UID" ]]; then
+  fi
+  if [[ ! -f "$MOUNT_DIR/.Trash-$UID" ]]; then
     touch "$MOUNT_DIR/.Trash-$UID"
   fi
-  xdg-open "$MOUNT_DIR"
 }
 
 unmount() {
-  MOUNT_DIR="$HOME/.local/share/rclone/mnt/${2^}$([[ $1 == 'remote' ]] && echo ' (remote)' || echo '')"
-  fusermount -u "${@:3}" "$MOUNT_DIR"
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  if mountpoint "$MOUNT_DIR" >/dev/null 2>&1 ; then
+    if ! fusermount -u "${@:3}" "$MOUNT_DIR"; then
+      print-error "\n$(lsof "$MOUNT_DIR")\n\n"
+    fi
+    rmdir --ignore-fail-on-non-empty "$MOUNT_DIR"
+  else
+    print-warning "\n  vault not mounted: '${MOUNT_DIR}'\n\n"
+  fi
+  MOUNT_CACHE_DIR="$HOME/.cache/rclone/vfs/crypt-$1-$2"
+  if [[ -d "$MOUNT_CACHE_DIR" ]]; then
+    print-info "Cleaning up vault VFS cache: '${MOUNT_CACHE_DIR}'\n"
+    rm -rf "$HOME/.cache/rclone/vfs/crypt-$1-$2"
+  fi
+}
+
+get-scoped-mount-dir() {
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  echo "$HOME/.local/share/rclone/mnt/scopes/${MOUNT_DIR##*/}/$3"
+}
+
+mount-scoped() {
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  SCOPED_MOUNT_DIR=$(get-scoped-mount-dir "$1" "$2" "$3")
+  if mountpoint "$SCOPED_MOUNT_DIR" >/dev/null 2>&1 ; then
+    print-warning "\n  scoped vault already mounted: '${SCOPED_MOUNT_DIR}'\n\n"
+  else
+    mkdir -p "$SCOPED_MOUNT_DIR"
+    bindfs \
+      "${@:4}" \
+      "$MOUNT_DIR/$3" "$SCOPED_MOUNT_DIR"
+    sleep 1
+  fi
+  if [[ -d "$SCOPED_MOUNT_DIR/.Trash-$UID" ]]; then
+    rm -r "$SCOPED_MOUNT_DIR/.Trash-$UID"
+  fi
+  if [[ ! -f "$SCOPED_MOUNT_DIR/.Trash-$UID" ]]; then
+    touch "$SCOPED_MOUNT_DIR/.Trash-$UID"
+  fi
+}
+
+unmount-scoped() {
+  MOUNT_DIR=$(get-mount-dir "$1" "$2")
+  SCOPED_MOUNT_DIR=$(get-scoped-mount-dir "$1" "$2" "$3")
+  if mountpoint "$SCOPED_MOUNT_DIR" >/dev/null 2>&1 ; then
+    if ! fusermount -u "${@:4}" "$SCOPED_MOUNT_DIR"; then
+      print-error "\n$(lsof "$SCOPED_MOUNT_DIR")\n\n"
+    fi
+    (
+      cd "$MOUNT_DIR"
+      rmdir --ignore-fail-on-non-empty -p "$3"
+    )
+  else
+    print-warning "\n  scope not mounted: '${SCOPED_MOUNT_DIR}'\n\n"
+  fi
 }
 
 check() {
@@ -221,15 +284,132 @@ cleanup-hidden() {
     "crypt-$1-$2"
 }
 
+imap-backup() {
+  if [ ! -v 1 ]; then
+    print-error "CREDENTIALS not specified\n"
+  fi
+
+  if grep -q '^\s*#\s*user_allow_other\s*$' /etc/fuse.conf; then
+    print-info "==> updating 'fuse.conf' for scoped mounts with docker\n"
+    sudo sed -ir 's@^\s*#\s*user_allow_other\s*$@user_allow_other@' /etc/fuse.conf
+  fi
+
+  # start sub-shell to pickup '/etc/fuse.conf' changes and to not leak exports
+  # if sourced
+  (
+    print-info "==> fetching credentials\n"
+
+    # get secrets from 'bw'
+    MAIL_USERNAME="$(bw get item "$1" | jq -r '.login | .username')"
+    DAVMAIL_KEYSTORE_PASSWORD="$(bw get item "$1" | jq -r '.login | .password')"
+    REMOTE_URI="$(bw get item "$1" | jq -r 'first(.fields | .[] | select(.name=="ref:remote") | .value)')"
+    REMOTE="${REMOTE_URI%%:*}"
+    REMOTE_PATH="${REMOTE_URI#*:}"
+    DAVMAIL_URL="$(bw get item "$1" | jq -r 'first(.login | .uris | .[] | .uri)')"
+    MAIL_PASSWORD="$(bw get item \
+      "$(bw get item "$1" | jq -r 'first(.fields | .[] | select(.name=="ref:password") | .value)')" |
+        jq -r '.login | .password'
+    )"
+
+    docker-compose() {
+      docker compose -f "$HOME/Documents/dotfiles/etc/docker/exchange-backup/docker-compose.yaml" "$@"
+    }
+
+    trap 'docker-compose down; unmount-scoped local "$REMOTE" "$REMOTE_PATH"; unmount local "$REMOTE"; rm -f "$HOME/.config/davmail/davmail.properties" "$HOME/.config/davmail/davmail.properties" || true;' ERR
+
+    print-info "==> mounting vault: '$(get-mount-dir local "$REMOTE")'\n";
+    mount local "$REMOTE" --daemon --vfs-cache-mode writes
+
+    MAIL_SCOPED_DIR=$(get-scoped-mount-dir local "$REMOTE" "$REMOTE_PATH")
+
+    print-info "==> mounting scoped vault: '$MAIL_SCOPED_DIR'\n";
+    mount-scoped local "$REMOTE" "$REMOTE_PATH" -o no-allow-other -o allow_root
+
+    GID="$(id -g)"
+
+    export UID
+    export GID
+    export DAVMAIL_URL
+    export DAVMAIL_KEYSTORE_PASSWORD
+    export MAIL_USERNAME
+    export MAIL_PASSWORD
+    export MAIL_SCOPED_DIR
+
+    if [[ ! -f "$HOME/.local/share/davmail/davmail.p12" ]]; then
+      print-info "==> generating imap certificate\n"
+      if [[ ! -d "$HOME/.local/share/davmail" ]]; then
+        mkdir -m 700 "$HOME/.local/share/davmail" 2>/dev/null || true
+      else
+        chmod 700 "$HOME/.local/share/davmail"
+      fi
+      docker run --rm -it \
+        -u "$UID:$GID" \
+        -v "$HOME/.local/share/davmail:/root:Z" \
+        --workdir /root \
+        openjdk:8-jre-alpine \
+        keytool \
+          -genkey \
+          -keyalg rsa \
+          -keysize 2048 \
+          -storepass "$DAVMAIL_KEYSTORE_PASSWORD" \
+          -keystore davmail.p12 \
+          -storetype pkcs12 \
+          -validity 3650 \
+          -dname cn=davmail,ou=davmail,o=sf,o=net
+      chmod 600 "$HOME/.local/share/davmail/davmail.p12"
+    fi
+
+    print-info "==> refreshing docker images\n"
+    docker-compose build --pull
+
+    print-info "==> setting up imap proxy to exchange\n"
+    mkdir -p "$HOME/.config/davmail"
+    rm -f "$HOME/.config/davmail/davmail.properties" || true
+    mkfifo -m=0600 "$HOME/.config/davmail/davmail.properties"
+    envsubst < "$HOME/Documents/dotfiles/etc/docker/davmail/davmail.template.properties" > "$HOME/.config/davmail/davmail.properties" &
+    docker-compose up --force-recreate -V -d davmail
+
+    # waiting for healthy status
+    docker compose -f "$HOME/Documents/dotfiles/etc/docker/exchange-backup/docker-compose.yaml" events --json |
+      jq -n 'inputs | if .action == "exec_die" and .service == "davmail"  and .attributes.exitCode == "0" then ., halt else empty end' \
+      || true
+
+    print-info "==> backing up email\n"
+    mkdir -p "$HOME/.config/imap-backup"
+    rm -f "$HOME/.config/imap-backup/config.json" || true
+    mkfifo -m=0600 "$HOME/.config/imap-backup/config.json"
+    envsubst < "$HOME/Documents/dotfiles/etc/docker/imap-backup/config.template.json" > "$HOME/.config/imap-backup/config.json" &
+    docker compose -f "$HOME/Documents/dotfiles/etc/docker/exchange-backup/docker-compose.yaml" up --force-recreate -V imap-backup
+
+    print-info "==> cleaning up\n"
+    trap - ERR
+    docker-compose down
+    unmount-scoped local "$REMOTE" "$REMOTE_PATH"
+    unmount local "$REMOTE"
+    rm -f "$HOME/.config/davmail/davmail.properties" "$HOME/.config/davmail/davmail.properties" || true
+  )
+}
+
 case $1 in
   config) config "${@:2}";;
-  mount) mount "${@:2}";;
-  unmount) unmount "${@:2}";;
+  mount)
+    print-info "=> mounting vault: $(get-mount-dir "$1" "$2")\n";
+    mount "${@:2}";
+    xdg-open "$(get-mount-dir "$1" "$2")";
+    ;;
+  unmount)
+    print-info "=> unmounting vault: $(get-mount-dir "$1" "$2")\n";
+    unmount "${@:2}";
+    ;;
   check) check "${@:2}";;
   copy) copy "${@:2}";;
   sync) sync "${@:2}";;
   show-hidden) show-hidden "${@:2}";;
   cleanup-hidden) cleanup-hidden "${@:2}";;
+  imap-backup)
+    print-info "=> imap-backup\n";
+    imap-backup "${@:2}";
+    ;;
   rclone) RCLONE_VERBOSE=0 rclone "$2" "${RCLONE_ARGS[@]}" "${@:3}";;
   *) print-error "Unknown COMMAND: '$1'\n";;
 esac
