@@ -16,9 +16,11 @@ update-bitwarden-cli() (
     (
       set -x
       curl -fLo /tmp/bw.zip "$URI"
-      unzip -o /tmp/bw.zip
-      mv /tmp/bw "$HOME/.local/bin"
-      chmod u+x "$HOME/.local/bin/bw"
+      (
+        cd "$HOME/.local/bin" || exit 1
+        unzip -o /tmp/bw.zip
+        chmod u+x bw
+      )
       rm /tmp/bw.zip
     )
   fi
