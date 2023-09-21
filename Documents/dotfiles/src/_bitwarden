@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-update-bitwarden() (
+update-bitwarden() {
   # install binary
   if [[ ! -f $HOME/.local/bin/bitwarden ]]; then
     "==> installing\n"
@@ -14,7 +14,7 @@ update-bitwarden() (
   # update desktop shortcut
   elif [[ "$(date -r "$HOME/.local/bin/bitwarden" +%s)" -ge "$(date -r "$HOME/.local/share/applications/bitwarden.desktop" +%s)" ]]; then
     print-info "==> updating desktop shortcut\n"
-    (
+    {
       set -x
       # mount app image
       rm -f /tmp/fifo || true
@@ -49,8 +49,8 @@ update-bitwarden() (
       trap - ERR
       exec 3>&-
       rm /tmp/fifo
-    )
+    }
   fi
-)
+}
 
 run-module true x86_64

@@ -1,37 +1,43 @@
 #!/usr/bin/env bash
 
+install-rclone() {
+  architecture=""
+  case $(uname -m) in
+    # i386 | i686)  architecture="386" ;;
+    x86_64)       architecture="amd64" ;;
+    # arm)          architecture="arm" ;;
+    # armv6l)       architecture="arm-v6" ;;
+    # armv7l)       architecture="arm-v7" ;;
+    # arm64)        architecture="arm64" ;;
+    *)            echo "Unable to determine system architecture."; exit 1 ;;
+  esac
+
+  {
+    set -x
+    curl -fLo "$HOME/rclone.zip" \
+      "https://beta.rclone.org/rclone-beta-latest-linux-$architecture.zip"
+    unzip -j "$HOME/rclone.zip" -d "$HOME/rclone"
+
+    mkdir -p "$HOME/.local/bin"
+    mv "$HOME/rclone/rclone" "$HOME/.local/bin"
+
+    mkdir -p "$HOME/.local/man"
+    mv "$HOME/rclone/rclone.1" "$HOME/.local/man"
+
+    rm -r "$HOME/rclone"
+    rm "$HOME/rclone.zip"
+  }
+}
+
 # nightly for proton drive support until in main
-update-rclone() (
-  if [[ "$(date -r "$HOME/.local/bin/rclone" +%s)" -le "$(date -d "yesterday" +%s)" ]]; then
-    print-info "==> updating\n"
-
-    architecture=""
-    case $(uname -m) in
-      # i386 | i686)  architecture="386" ;;
-      x86_64)       architecture="amd64" ;;
-      # arm)          architecture="arm" ;;
-      # armv6l)       architecture="arm-v6" ;;
-      # armv7l)       architecture="arm-v7" ;;
-      # arm64)        architecture="arm64" ;;
-      *)            echo "Unable to determine system architecture."; exit 1 ;;
-    esac
-
-    (
-      set -x
-      curl -fLo "$HOME/rclone.zip" \
-        "https://beta.rclone.org/rclone-beta-latest-linux-$architecture.zip"
-      unzip -j "$HOME/rclone.zip" -d "$HOME/rclone"
-
-      mkdir -p "$HOME/.local/bin"
-      mv "$HOME/rclone/rclone" "$HOME/.local/bin"
-
-      mkdir -p "$HOME/.local/man"
-      mv "$HOME/rclone/rclone.1" "$HOME/.local/man"
-
-      rm -r "$HOME/rclone"
-      rm "$HOME/rclone.zip"
-    )
+update-rclone() {
+  if [[ -f "$HOME/.local/bin/rclone" ]]; then
+    print-info "==> installing\n"
+    install-rclone
+  elif [[ "$(date -r "$HOME/.local/bin/rclone" +%s)" -le "$(date -d "yesterday" +%s)" ]]; then
+    print-info "==> upgrading\n"
+    install-rclone
   fi
-)
+}
 
 run-module true x86_64

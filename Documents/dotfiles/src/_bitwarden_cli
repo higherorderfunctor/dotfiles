@@ -7,7 +7,7 @@ update-bitwarden-cli() (
   else
     URI=$(bw update | sed -nr 's@You can download this update at (https://.*zip)$@\1@p')
     if [[ -n "${URI}" ]]; then
-      print-info "==> updating\n"
+      print-info "==> upgrading\n"
     fi
   fi
 
