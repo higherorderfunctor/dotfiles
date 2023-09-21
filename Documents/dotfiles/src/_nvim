@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+NVIM="$HOME/.local/bin/nvim"
+
 install-nvim() {
   {
     set -x
-    curl -Lo "$HOME/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/download/nvim.appimage" || true
-    chmod u+x "$HOME/.local/bin/nvim"
+    curl -Lo "$NVIM" https://github.com/neovim/neovim/releases/latest/download/nvim.appimage || true
+    chmod u+x "$NVIM"
   }
   print-info "===> updating desktop shortcut\n"
   {
@@ -30,7 +32,7 @@ install-nvim() {
     }
     mkdir -p "$HOME/.local/share/applications/"
     sed \
-      -e "s@^Exec=.*@Exec=$HOME/.local/bin/nvim %F@" \
+      -e "s@^Exec=.*@Exec=$NVIM %F@" \
       -e "s@^Icon=.*@Icon=$HOME/.local/share/icons/nvim.png@" \
       < "$NVIM_MOUNT_DIR/nvim.desktop" \
       > "$HOME/.local/share/applications/nvim.desktop"
@@ -51,10 +53,10 @@ declare -a COC_EXTENSIONS=(
 )
 
 update-nvim() {
-  if [[ -f "$HOME/.local/bin/nvim" ]]; then
+  if [[ -f "$NVIM" ]]; then
     print-info "==> installing\n"
     install-nvim
-  elif [[ "$(date -r "$HOME/.local/bin/nvim" +%s)" -le "$(date -d "yesterday" +%s)" ]]; then
+  elif [[ "$(date -r "$NVIM" +%s)" -le "$(date -d "yesterday" +%s)" ]]; then
     print-info "==> upgrading\n"
     install-nvim
   fi
@@ -63,21 +65,21 @@ update-nvim() {
     if [ ! -f "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
       print-info "==> installing vim-plug\n"
       {
-        set +x
+        set -x
         curl -fLo "$HOME/.local/share/nvim/site/autoload/plug.vim" \
           --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
       }
     else
       print-info "==> updating vim-plug\n"
       {
-        set +x
+        set -x
         nvim -es -u "$HOME/.config/nvim/init.vim" -i NONE -c "PlugUpgrade" -c "qa"
       }
     fi
 
     print-info "===> updating plugins\n"
     {
-      set +x
+      set -x
       nvim -es -u "$HOME/.config/nvim/init.vim" -i NONE -c "PlugUpdate" -c "qa"
     }
 
