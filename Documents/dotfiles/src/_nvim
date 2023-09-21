@@ -59,7 +59,6 @@ update-nvim() {
     print-info "==> upgrading\n"
     install-nvim
   fi
-  rehash
 
   {
     if [ ! -f "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
