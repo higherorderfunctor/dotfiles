@@ -154,3 +154,25 @@ These commands/flags are not well tested yet.
 sudo dd if=/dev/<DISK> bs=128K status=progress |
   gzip -c > ~/.local/share/rclone/mnt/<MOUNT>/<PATH/TO/IMAGE>.gz
 ```
+
+## Recoll
+
+### Example Config
+
+```console
+# ~/.config/recoll/work/recoll.conf
+topdirs = ~/.local/share/rclone/mnt/Work
+cachedir = ~/.local/share/rclone/mnt/Work/.recoll
+skippedNames = ~/.local/share/rclone/mnt/Work/.recoll
+indexstemminglanguages = english
+```
+
+### Running
+
+```console
+vault mount local work --vfs-cache-mode=full -d
+recollindex -c .config/recoll/work
+recollq -c .config/recoll/work <QUERY>
+vault unmount local work
+rm -rf ~/.cache/rclone/vfs/crypt-local-work
+```

@@ -60,14 +60,20 @@ declare -a ppas=(
 )
 
 declare -a packages=(
+  antiword # for recoll
   bindfs
   jq
   moolticute
+  poppler-utils # for recoll
+  recollcmd
   shellcheck
   tmux
   wl-clipboard
+  wv # for recoll
   xclip
   zsh
+  aspell # for recoll
+  libimage-exiftool-perl # for recoll
 )
 
 sudo apt-get update && sudo apt-get upgrade && sudo snap refresh
