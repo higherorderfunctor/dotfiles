@@ -15,7 +15,7 @@ install-nvim() {
     rm -f /tmp/fifo || true
     mkfifo /tmp/fifo
     exec 3<> /tmp/fifo
-    nvim --appimage-mount >&3 &
+    $NVIM --appimage-mount >&3 &
     NVIM_MOUNT_PID=$!
     # handle clean up on error
     trap 'kill "$NVIM_MOUNT_PID"; exec 3>&-; rm -f /tmp/fifo' ERR
@@ -73,14 +73,14 @@ update-nvim() {
       print-info "==> updating vim-plug\n"
       {
         set -x
-        nvim -es -u "$HOME/.config/nvim/init.vim" -i NONE -c "PlugUpgrade" -c "qa"
+        $NVIM -es -u "$HOME/.config/nvim/init.vim" -i NONE -c "PlugUpgrade" -c "qa"
       }
     fi
 
     print-info "===> updating plugins\n"
     {
       set -x
-      nvim -es -u "$HOME/.config/nvim/init.vim" -i NONE -c "PlugUpdate" -c "qa"
+      $NVIM -es -u "$HOME/.config/nvim/init.vim" -i NONE -c "PlugUpdate" -c "qa"
     }
 
     print-info "===> installing coc extensions\n"
@@ -103,7 +103,7 @@ update-nvim() {
     print-info "===> updating coc extensions\n"
     {
       set -x
-      nvim -es -u "$HOME/.config/nvim/init.vim" -i NONE -c "CocUpdateSync" -c "qa"
+      $NVIM -es -u "$HOME/.config/nvim/init.vim" -i NONE -c "CocUpdateSync" -c "qa"
     }
   }
 }
