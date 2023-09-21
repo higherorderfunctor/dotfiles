@@ -70,6 +70,8 @@ declare -a packages=(
   zsh
 )
 
+sudo apt-get update && sudo apt-get upgrade && sudo snap refresh
+
 (
   UBUNTU_CODENAME="$(grep -oE "UBUNTU_CODENAME=\S+" < /etc/os-release | cut -d'=' -f2)"
   for ppa in "${ppas[@]}"; do
