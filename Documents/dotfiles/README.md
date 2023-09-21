@@ -176,3 +176,16 @@ recollq -c .config/recoll/work <QUERY>
 vault unmount local work
 rm -rf ~/.cache/rclone/vfs/crypt-local-work
 ```
+
+## Secure File Backup
+
+```console
+https://askubuntu.com/questions/907425/how-do-i-back-up-and-restore-passwords-and-keys
+bw unlock
+vault mount local <VAULT> --vfs-cache-mode full --daemon
+mkdir -p <VAULT_MOUNT_POINT>/Backups/Home/$(hostname)
+cp -R ~/.local/share/keyrings <VAULT_MOUNT_POINT>/Backups/Home/$(hostname)
+cp -R ~/.ssh <VAULT_MOUNT_POINT>/Backups/Home/$(hostname)
+cp -R ~/.gnupg <VAULT_MOUNT_POINT>/Backups/Home/$(hostname)
+vault unmount local <VAULT>
+```
