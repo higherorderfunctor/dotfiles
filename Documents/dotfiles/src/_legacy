@@ -32,10 +32,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# shellcheck source="_nvim"
-. "$HOME/Documents/dotfiles/src/_nvim"
-
-exit
 export DOTFILES_SECURE
 
 # TODO
