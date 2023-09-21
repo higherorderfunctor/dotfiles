@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
 install-nvim() {
-  print-info "==> installing\n"
   {
     set -x
     curl -Lo "$HOME/.local/bin/nvim https://github.com/neovim/neovim/releases/latest/download/nvim.appimage" || true
     chmod u+x "$HOME/.local/bin/nvim"
   }
-  print-info "==> updating desktop shortcut\n"
+  print-info "===> updating desktop shortcut\n"
   {
     set -x
     # mount app image
@@ -21,13 +20,13 @@ install-nvim() {
     read -r NVIM_MOUNT_DIR <&3
     # update icon
     {
-      set +x && print-info "===> updating nvim.png\n"
+      set +x && print-info "====> updating nvim.png\n"
     }
     mkdir -p "$HOME/.local/share/icons"
     cp "$NVIM_MOUNT_DIR/nvim.png" "$HOME/.local/share/icons/"
     # update desktop shortcut
     {
-      set +x && print-info "===> updating nvim.desktop\n"
+      set +x && print-info "====> updating nvim.desktop\n"
     }
     mkdir -p "$HOME/.local/share/applications/"
     sed \
@@ -37,7 +36,7 @@ install-nvim() {
       > "$HOME/.local/share/applications/nvim.desktop"
     # clean up
     {
-      set +x && print-info "===> cleaning up\n"
+      set +x && print-info "====> cleaning up\n"
     }
     kill "$NVIM_MOUNT_PID"
     trap - ERR

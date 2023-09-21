@@ -13,7 +13,7 @@ update-bitwarden() {
     )
   # update desktop shortcut
   elif [[ "$(date -r "$HOME/.local/bin/bitwarden" +%s)" -ge "$(date -r "$HOME/.local/share/applications/bitwarden.desktop" +%s)" ]]; then
-    print-info "==> updating desktop shortcut\n"
+    print-info "===> updating desktop shortcut\n"
     {
       set -x
       # mount app image
@@ -27,13 +27,13 @@ update-bitwarden() {
       read -r BITWARDEN_MOUNT_DIR <&3
       # update icon
       {
-        set +x && print-info "===> updating bitwarden.png\n"
+        set +x && print-info "====> updating bitwarden.png\n"
       }
       mkdir -p "$HOME/.local/share/icons"
       cp "$BITWARDEN_MOUNT_DIR/bitwarden.png" "$HOME/.local/share/icons/"
       # update desktop shortcut
       {
-        set +x && print-info "===> updating bitwarden.desktop\n"
+        set +x && print-info "====> updating bitwarden.desktop\n"
       }
       mkdir -p "$HOME/.local/share/applications/"
       sed \
@@ -43,7 +43,7 @@ update-bitwarden() {
         > "$HOME/.local/share/applications/bitwarden.desktop"
       # clean up
       {
-        set +x && print-info "===> cleaning up\n"
+        set +x && print-info "====> cleaning up\n"
       }
       kill "$BITWARDEN_MOUNT_PID"
       trap - ERR
