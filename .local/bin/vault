@@ -49,7 +49,7 @@ if [[ "$1" == "unlock" ]]; then
     print-error "Failed to unlock your vault\n"
   fi
   print-info "Your vault is unlocked.  Use 'exit' to lock.\n"
-  BW_SESSION=$BW_SESSION $SHELL
+  BW_SESSION=$BW_SESSION $SHELL "${@:2}"
   BW_SESSION=$BW_SESSION bw lock
   # TODO deep search
   for dir in "$HOME/.local/share/rclone/mnt/"*; do
@@ -66,8 +66,8 @@ if [[ "$1" == "unlock" ]]; then
   exit
 fi
 
-if [[ ${NON_REMOTE_ACCESS_COMMANDS[*]} =~ $1 ]] && [[ "$(bw status | jq -r '.status')" != "unlocked" ]]; then
-  print-error "Your vault is not unlocked\n"
+if [[ "$(bw status | jq -r '.status')" != "unlocked" ]]; then
+  print-error "Your vault is locked\n"
 fi
 
 # force sync bw once an hour
@@ -181,7 +181,7 @@ mount() {
 
 unmount() {
   MOUNT_DIR=$(get-mount-dir "$1" "$2")
-  if mountpoint "$MOUNT_DIR" >/dev/null 2>&1 ; then
+  if mountpoint "$MOUNT_DIR" >/dev/null 2>&1; then
     if ! fusermount -u "${@:3}" "$MOUNT_DIR"; then
       print-error "\n$(lsof "$MOUNT_DIR")\n\n"
     fi
@@ -224,7 +224,7 @@ mount-scoped() {
 unmount-scoped() {
   MOUNT_DIR=$(get-mount-dir "$1" "$2")
   SCOPED_MOUNT_DIR=$(get-scoped-mount-dir "$1" "$2" "$3")
-  if mountpoint "$SCOPED_MOUNT_DIR" >/dev/null 2>&1 ; then
+  if mountpoint "$SCOPED_MOUNT_DIR" >/dev/null 2>&1; then
     if ! fusermount -u "${@:4}" "$SCOPED_MOUNT_DIR"; then
       print-error "\n$(lsof "$SCOPED_MOUNT_DIR")\n\n"
     fi
@@ -393,13 +393,20 @@ imap-backup() {
 case $1 in
   config) config "${@:2}";;
   mount)
-    print-info "=> mounting vault: $(get-mount-dir "$1" "$2")\n";
-    mount "${@:2}";
-    xdg-open "$(get-mount-dir "$1" "$2")";
+    MOUNT_DIR=$(get-mount-dir "$2" "$3")
+    print-info "=> mounting vault: $MOUNT_DIR\n"
+    (
+      while ! mountpoint "$MOUNT_DIR" >/dev/null 2>&1; do
+        sleep 1
+      done
+      xdg-open "$MOUNT_DIR";
+    ) &
+    mount "${@:2}"
     ;;
   unmount)
-    print-info "=> unmounting vault: $(get-mount-dir "$1" "$2")\n";
-    unmount "${@:2}";
+    MOUNT_DIR=$(get-mount-dir "$2" "$3")
+    print-info "=> unmounting vault: $MOUNT_DIR\n"
+    unmount "${@:2}"
     ;;
   check) check "${@:2}";;
   copy) copy "${@:2}";;
@@ -407,8 +414,8 @@ case $1 in
   show-hidden) show-hidden "${@:2}";;
   cleanup-hidden) cleanup-hidden "${@:2}";;
   imap-backup)
-    print-info "=> imap-backup\n";
-    imap-backup "${@:2}";
+    print-info "=> imap-backup\n"
+    imap-backup "${@:2}"
     ;;
   rclone) RCLONE_VERBOSE=0 rclone "$2" "${RCLONE_ARGS[@]}" "${@:3}";;
   *) print-error "Unknown COMMAND: '$1'\n";;
