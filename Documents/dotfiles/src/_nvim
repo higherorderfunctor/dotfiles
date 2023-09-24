@@ -32,7 +32,7 @@ install-nvim() {
     }
     mkdir -p "$HOME/.local/share/applications/"
     sed \
-      -e "s@^TryExec=.*@Exec=$NVIM@" \
+      -e "s@^TryExec=.*@TryExec=$NVIM@" \
       -e "s@^Exec=.*@Exec=$NVIM %F@" \
       -e "s@^Icon=.*@Icon=$HOME/.local/share/icons/nvim.png@" \
       < "$NVIM_MOUNT_DIR/nvim.desktop" \
