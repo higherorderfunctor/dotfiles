@@ -31,10 +31,10 @@ install-rclone() {
 
 # nightly for proton drive support until in main
 update-rclone() {
-  if [[ -f "$HOME/.local/bin/rclone" ]]; then
+  if [[ ! -f "$HOME/.local/bin/rclone" ]]; then
     print-info "==> installing\n"
     install-rclone
-  elif [[ "$(date -r "$HOME/.local/bin/rclone" +%s)" -le "$(date -d "yesterday" +%s)" ]]; then
+  elif [[ "$(date -r "$HOME/.local/bin/rclone" +%s)" -lt "$(date -d "yesterday" +%s)" ]]; then
     print-info "==> upgrading\n"
     install-rclone
   fi
