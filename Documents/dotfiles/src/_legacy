@@ -106,10 +106,6 @@ dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
 # save config
 # dconf dump /org/gnome/terminal/ > .config/gnome-terminal/gnome-terminal.conf
 
-## firefox (snap - yuck need to switch)
-curl -fLo "$(find ~/snap/firefox/common/.mozilla/firefox/ -name '*\.default')"/user.js \
-  https://github.com/arkenfox/user.js/raw/master/user.js
-
 # shellcheck source="_zsh"
 . "$HOME/Documents/dotfiles/src/_zsh"
 # shellcheck source="_nvim"
