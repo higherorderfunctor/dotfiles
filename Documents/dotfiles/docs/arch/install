@@ -9,6 +9,34 @@ WIFI_PASSWORD=
 PARTITION=1
 FORMAT=1
 MOUNT=1
+PACSTRAP=1
+
+packages=(
+    base
+    linux-hardened
+    linux-firmware
+    booster
+    sbsigntools
+    lvm2
+    openssh
+    git
+    iwd
+    efibootmgr
+    binutils
+    neovim
+)
+chroot_args=()
+
+case "$(lscpu | grep '^Model name:' | awk -F'  +' '{ print $2 }' | awk '{ print $1 }')" in
+	AMD)
+	packages+=(amd-ucode)
+	chroot_args+=(--microcode 'amd-ucode.img')
+	;;		
+	*)
+	echo "Unknown arch: $1"
+	exit 1
+	;;
+esac
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
@@ -39,6 +67,14 @@ while [[ $# -gt 0 ]]; do
 		MOUNT=0
 		shift
 		;;
+		--nopacstrap)
+		PACSTRAP=0
+		shift
+		;;
+		--nosysconfig|--noinitramfs|--nobootloader)
+		chroot_args+=("$1")
+		shift
+		;;
 		*)
 		echo "Unknown option: $1"
 		exit 1
@@ -54,6 +90,13 @@ if [[ "$(cat /sys/firmware/efi/fw_platform_size)" == 64 ]]; then
 else
   echo "This script only supports EUFI64 systems, exiting."
   exit 1
+fi
+echo "==> checking EUFI64 vars"
+if [[ "$(efivar --list | wc -l)" -ne 0 ]]; then
+	echo "var accessable!"
+else
+	echo "vars not accessable!"
+	exit 1
 fi
 
 echo "=> checking network..."
@@ -149,9 +192,10 @@ awk -vOFS='\n' '{print NR-1 ") " $1}' <<< $(printf '%s\n' "${disks[@]}")
 read -rp "Pick an install disk: " idx
 disk="${disks[$idx]}"
 if [[ "$PARTITION" -eq 1 ]]; then
+	set -x
 	echo "partitioning disk $disk"
 	# TODO make select box
-	best_lbaf="$(nvme id-ns -H $disk | grep "Relative Performance: .*Best" | grep -v "in use" | awk '{ print $3 }')"
+	best_lbaf="$(set +o pipefail && nvme id-ns -H $disk | grep 'Relative Performance: .*Best' | grep -v 'in use' | awk '{ print $3 }')"
 	if [[ -n $best_lbaf ]]; then
 		echo "do the thing $best_lbaf"
 		# nvme format --lbaf=1 /dev/nvme0n1
@@ -162,7 +206,6 @@ if [[ "$PARTITION" -eq 1 ]]; then
 		mkpart primary fat32 0% 2048MB \
 		set 1 esp on \
 		mkpart primary ext4 2048MB 100%
-	echo "@@"
 	if [[ "$(parted "$disk" align-check optimal 1)" != "1 aligned" ]]; then
 		echo "part 1 not aligned"
 	elif [[ "$(parted "$disk" align-check optimal 2)" != "2 aligned" ]]; then
@@ -172,28 +215,39 @@ if [[ "$PARTITION" -eq 1 ]]; then
 else
 	echo "formatting skipped"
 fi
-
+chroot_args+=(--root-disk "${disk}p2")
 if [[ "$FORMAT" -eq 1 ]]; then
-	# set -x
-	# echo "formatting disk ${disk}p1"
-	# mkfs.fat -F 32 $(disk)p1
-	# echo "formatting disk ${disk}p2"
-	# cryptsetup -y -v luksFormat ${disk}p2
-	# cryptsetup open ${disk}p2 cryptlvm
-	# pvcreate /dev/mapper/cryptlvm
-	# vgcreate SystemVolGroup /dev/mapper/cryptlvm
-	# lvcreate -l 100%FREE SystemVolGroup -n root
-	# lvreduce -L -256MB SystemVolGroup/root
-	# mkfs.ext4 /dev/SystemVolGroup/root
+	echo "formatting disk ${disk}p1"
+	mkfs.fat -F 32 ${disk}p1
+	echo "formatting disk ${disk}p2"
+	cryptsetup -y -v luksFormat ${disk}p2
+	cryptsetup open ${disk}p2 cryptlvm
+	pvcreate /dev/mapper/cryptlvm
+	vgcreate SystemVolGroup /dev/mapper/cryptlvm
+	lvcreate -l 100%FREE SystemVolGroup -n root
+	lvreduce -L -256MB SystemVolGroup/root
+	mkfs.ext4 /dev/SystemVolGroup/root
 	# cryptsetup remove /dev/mapper/cryptlvm if failures
 fi
+
 if [[ "$MOUNT" -eq 1 ]]; then
-	# mount --mkdir /dev/SystemVolGroup/root /mnt
-	# mount --mkdir ${disk}p2 /mnt/efi
+	echo "blah"
+	mount --mkdir /dev/SystemVolGroup/root /mnt
+	mount --mkdir -o uid=0,gid=0,fmask=0077,dmask=0077 ${disk}p1 /mnt/boot
 fi
 
-	# TODO e2scrub
-	# TODO SWAP
+if [[ "$PACSTRAP" -eq 1 ]]; then
+	pacstrap -K /mnt "${packages[@]}"
+fi
+
+genfstab -U /mnt >> /mnt/etc/fstab
+#cat /mnt/etc/fstab # review
+cp "$(dirname "$0")"/chroot-install /mnt/root
+printf "%s \n" "${chroot_args[@]}"
+arch-chroot /mnt /root/chroot-install "${chroot_args[@]}"
+
+# TODO e2scrub
+# TODO SWAP
 
 
 
