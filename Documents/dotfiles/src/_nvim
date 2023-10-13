@@ -86,7 +86,7 @@ update-nvim() {
 
     print-info "===> installing coc extensions\n"
     {
-      nvim +'CocInstall -sync coc-json coc-tsserver' +qall
+      nvim +"CocInstall -sync ${COC_EXTENSIONS[*]}" +qall
 
       # set -x
       # mkdir -p "$HOME/.config/coc/extensions"

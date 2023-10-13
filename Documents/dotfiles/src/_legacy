@@ -118,6 +118,6 @@ dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
 . "$HOME/Documents/dotfiles/src/_rclone"
 # shellcheck source="_firefox"
 . "$HOME/Documents/dotfiles/src/_firefox"
-# shellcheck source="_keybase"
-. "$HOME/Documents/dotfiles/src/_keybase"
+# # shellcheck source="_keybase"
+# . "$HOME/Documents/dotfiles/src/_keybase"
 # TODO https://github.com/prettier/vim-prettier for bash?
