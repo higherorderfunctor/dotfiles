@@ -175,6 +175,10 @@ let g:localvimrc_persistent = 1
 " let g:tsuquyomi_completion_detail = 1
 " let g:tsuquyomi_disable_quickfix = 1
 " autocmd FileType typescript setlocal completeopt-=preview
+"
+"" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved
+set signcolumn=yes
 
 " coc config
 " use <tab> for trigger completion and navigate to the next complete item
@@ -189,6 +193,12 @@ inoremap <silent><expr> <Tab>
           \ coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
+" Highlight the symbol and its references when holding the cursor
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
+
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
 else
@@ -198,12 +208,19 @@ endif
 inoremap <silent><expr> <CR> coc#pum#visible()
                               \? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
 " goto
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s)
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
 
 " riv config
 let g:riv_disable_folding = 1

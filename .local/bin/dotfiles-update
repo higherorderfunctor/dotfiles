@@ -7,6 +7,11 @@ dotfiles() {
   /usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
 }
 
+# DOTFILES_SECURE=true
+# . "$HOME/Documents/dotfiles/src/_common"
+# . "$HOME/Documents/dotfiles/src/_keybase"
+# exit
+
 dotfiles config --global user.name "Christopher Aubut"
 dotfiles config --local user.email "christopher@aubut.me"
 dotfiles config --local remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"

@@ -86,19 +86,21 @@ update-nvim() {
 
     print-info "===> installing coc extensions\n"
     {
-      set -x
-      mkdir -p "$HOME/.config/coc/extensions"
-      cd "$HOME/.config/coc/extensions" || exit 1
-      if [ ! -f package.json ]
-      then
-        echo '{"dependencies":{}}'> package.json
-      fi
-      npm install "${COC_EXTENSIONS[@]}" \
-        --install-strategy=shallow \
-        --ignore-scripts \
-        --no-bin-links \
-        --no-package-lock \
-        --omit=dev
+      nvim +'CocInstall -sync coc-json coc-tsserver' +qall
+
+      # set -x
+      # mkdir -p "$HOME/.config/coc/extensions"
+      # cd "$HOME/.config/coc/extensions" || exit 1
+      # if [ ! -f package.json ]
+      # then
+      #   echo '{"dependencies":{}}'> package.json
+      # fi
+      # npm install "${COC_EXTENSIONS[@]}" \
+      #   --install-strategy=shallow \
+      #   --ignore-scripts \
+      #   --no-bin-links \
+      #   --no-package-lock \
+      #   --omit=dev
     }
 
     print-info "===> updating coc extensions\n"
@@ -109,7 +111,7 @@ update-nvim() {
   }
 }
 
-run-module true x86_64
+run-module false x86_64
 
 # # define command which will be used when "nvim" is set as a merge tool
 # [mergetool "nvim"]
