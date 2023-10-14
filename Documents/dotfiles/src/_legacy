@@ -60,6 +60,7 @@ declare -a packages=(
   libimage-exiftool-perl # for recoll
   moolticute
   poppler-utils # for recoll
+  python3.11-venv
   recollcmd
   shellcheck
   tmux
