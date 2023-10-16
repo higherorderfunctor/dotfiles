@@ -14,6 +14,7 @@ Plug 'https://github.com/vim-airline/vim-airline.git'
 Plug 'https://github.com/vim-airline/vim-airline-themes.git'
 Plug 'https://github.com/voldikss/vim-floaterm.git'
 Plug 'https://github.com/tpope/vim-fugitive.git'
+Plug 'elubow/cql-vim'
 call plug#end()
 
 set mmp=10000
@@ -178,7 +179,7 @@ let g:localvimrc_persistent = 1
 "
 "" Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved
-set signcolumn=yes
+" set signcolumn=yes
 
 " coc config
 " use <tab> for trigger completion and navigate to the next complete item
