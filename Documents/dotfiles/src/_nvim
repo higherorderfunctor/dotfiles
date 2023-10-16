@@ -50,6 +50,7 @@ install-nvim() {
 
 declare -a COC_EXTENSIONS=(
   coc-json
+  coc-pyright
   coc-tsserver
 )
 
