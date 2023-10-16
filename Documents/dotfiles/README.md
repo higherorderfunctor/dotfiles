@@ -189,3 +189,11 @@ cp -R ~/.ssh <VAULT_MOUNT_POINT>/Backups/Home/$(hostname)
 cp -R ~/.gnupg <VAULT_MOUNT_POINT>/Backups/Home/$(hostname)
 vault unmount local <VAULT>
 ```
+
+# Ansible
+
+## Activating
+
+```console
+. "$HOME/.local/share/ansible/bin/activate"
+```
