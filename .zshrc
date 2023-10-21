@@ -33,4 +33,6 @@ export EDITOR="nvim"
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 # bitwarden
-eval "$(bw completion --shell zsh); compdef _bw bw;"
+if command -v bw; then
+  eval "$(bw completion --shell zsh); compdef _bw bw;"
+fi
