@@ -30,6 +30,7 @@ setopt HIST_IGNORE_SPACE
 export PATH="$HOME/.local/bin:$PATH"
 export MANPATH="$HOME/.local/man:$MANPATH"
 export EDITOR="nvim"
+export LESS='--mouse -R'
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 # bitwarden
