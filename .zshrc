@@ -35,8 +35,12 @@ alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 # bitwarden
 if command -v bw > /dev/null; then
-  #eval "$(bw completion --shell zsh); compdef _bw bw;"
+  # TODO move to install script eval "$(bw completion --shell zsh); compdef _bw bw;"
 fi
+
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
 # pnpm
 export PNPM_HOME="/home/caubut/.local/share/pnpm"

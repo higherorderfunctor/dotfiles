@@ -152,6 +152,12 @@ map <leader>at :ALEToggle<CR>
 map <leader>ad :ALEDetail<CR>
 map <leader>ac :pclose<CR>
 
+" let g:ale_linters = {
+"   \'json': ['eslint'],
+"   \'json5': ['eslint'],
+"   \'jsonc': ['eslint'],
+" \ }
+
 let g:ale_fixers = {
   \'*': ['remove_trailing_lines', 'trim_whitespace'],
   \'python': ['isort', 'black', 'remove_trailing_lines', 'trim_whitespace'],
@@ -160,11 +166,13 @@ let g:ale_fixers = {
   \'javascriptreact': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
   \'typescriptreact': ['eslint', 'remove_trailing_lines', 'trim_whitespace'],
   \'json': ['jq', 'remove_trailing_lines', 'trim_whitespace'],
+  \'json5': ['jq', 'remove_trailing_lines', 'trim_whitespace'],
+  \'jsonc': ['jq', 'remove_trailing_lines', 'trim_whitespace'],
   \'rust': ['rustfmt', 'remove_trailing_lines', 'trim_whitespace'],
 \ }
 
-let g:ale_javascript_eslint_executable = 'eslint_d --cache'
-let g:ale_typescript_eslint_executable = 'eslint_d --cache'
+let g:ale_javascript_eslint_executable = 'NODE_OPTIONS="--loader ts-node/esm --no-warnings" pnpm exec eslint_d --cache'
+let g:ale_typescript_eslint_executable = 'NODE_OPTIONS="--loader ts-node/esm --no-warnings" pnpm exec eslint_d --cache'
 let g:ale_echo_msg_format = '[%linter%/%severity%/%code%] %s'
 " let g:ale_detail_to_floating_preview = 1
 let g:ale_fix_on_save = 1

@@ -197,3 +197,12 @@ vault unmount local <VAULT>
 ```console
 . "$HOME/.local/share/ansible/bin/activate"
 ```
+
+# NodeJS
+Download the latest LTS or Current version of [nodejs](https://nodejs.org/en/download/current).
+
+```console
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+pnpm env use --global 20
+pnpm exec node --version
+```
