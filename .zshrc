@@ -37,3 +37,11 @@ alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 if command -v bw > /dev/null; then
   #eval "$(bw completion --shell zsh); compdef _bw bw;"
 fi
+
+# pnpm
+export PNPM_HOME="/home/caubut/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
