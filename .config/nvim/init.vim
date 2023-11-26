@@ -171,8 +171,7 @@ let g:ale_fixers = {
   \'rust': ['rustfmt', 'remove_trailing_lines', 'trim_whitespace'],
 \ }
 
-let g:ale_javascript_eslint_executable = 'ESLINT_USE_FLAT_CONFIG=true NODE_OPTIONS="--loader ts-node/esm --no-warnings" pnpm exec eslint_d --cache'
-let g:ale_typescript_eslint_executable = 'ESLINT_USE_FLAT_CONFIG=true NODE_OPTIONS="--loader ts-node/esm --no-warnings" pnpm exec eslint_d --cache'
+let g:ale_javascript_eslint_options = '--cache'
 let g:ale_echo_msg_format = '[%linter%/%severity%/%code%] %s'
 " let g:ale_detail_to_floating_preview = 1
 let g:ale_fix_on_save = 1
