@@ -45,7 +45,7 @@ install-wezterm() {
     mkdir -p "$HOME/.local/share/applications/"
     sed \
       -e "s@^TryExec=.*@TryExec=$WEZTERM@" \
-      -e "s@^Exec=.*@Exec=$WEZTERM %F@" \
+      -e "s@^Exec=.*@Exec=$WEZTERM start --cwd .@" \
       -e "s@^Icon=.*@Icon=$HOME/.local/share/icons/wezterm.png@" \
       < "$WEZTERM_MOUNT_DIR/wezterm.desktop" \
       > "$HOME/.local/share/applications/wezterm.desktop"
