@@ -122,6 +122,8 @@ dconf load /org/gnome/terminal/ < ~/.config/gnome-terminal/gnome-terminal.conf
 . "$HOME/Documents/dotfiles/src/_firefox"
 # shellcheck source="_wezterm"
 . "$HOME/Documents/dotfiles/src/_wezterm"
+# shellcheck source="_bruno"
+. "$HOME/Documents/dotfiles/src/_bruno"
 # # shellcheck source="_keybase"
 # . "$HOME/Documents/dotfiles/src/_keybase"
 # TODO https://github.com/prettier/vim-prettier for bash?
