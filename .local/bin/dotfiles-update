@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#
 
 set -euETo pipefail
 shopt -s inherit_errexit
@@ -9,7 +10,7 @@ dotfiles() {
 
 # DOTFILES_SECURE=true
 # . "$HOME/Documents/dotfiles/src/_common"
-# . "$HOME/Documents/dotfiles/src/_keybase"
+# . "$HOME/Documents/dotfiles/src/_wezterm"
 # exit
 
 dotfiles config --global user.name "Christopher Aubut"
