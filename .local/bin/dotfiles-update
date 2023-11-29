@@ -8,10 +8,10 @@ dotfiles() {
   /usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
 }
 
-DOTFILES_SECURE=true
-. "$HOME/Documents/dotfiles/src/_common"
-. "$HOME/Documents/dotfiles/src/_bruno"
-exit
+# DOTFILES_SECURE=true
+# . "$HOME/Documents/dotfiles/src/_common"
+# . "$HOME/Documents/dotfiles/src/_bruno"
+# exit
 
 dotfiles config --global user.name "Christopher Aubut"
 dotfiles config --local user.email "christopher@aubut.me"
