@@ -67,10 +67,12 @@ update-wezterm() {
     print-info "==> installing\n"
     install-wezterm
   fi
-  cd /tmp
-  git clone --depth 1 https://github.com/githubnext/monaspace.git
-  cd monaspace
-  bash ./util/install_linux.sh
+  if [[ ! -d /tmp/monaspace ]]; then
+    cd /tmp
+    git clone --depth 1 https://github.com/githubnext/monaspace.git
+    cd monaspace
+    bash ./util/install_linux.sh
+  fi
 }
 
 run-module true x86_64
