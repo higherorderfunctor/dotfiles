@@ -65,6 +65,7 @@ declare -a packages=(
   recollcmd
   shellcheck
   tmux
+  sxiv # image viewer
   wl-clipboard
   wv # for recoll
   xclip
