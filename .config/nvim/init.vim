@@ -14,8 +14,11 @@ Plug 'https://github.com/vim-airline/vim-airline.git'
 Plug 'https://github.com/vim-airline/vim-airline-themes.git'
 Plug 'https://github.com/voldikss/vim-floaterm.git'
 Plug 'https://github.com/tpope/vim-fugitive.git'
+Plug 'https://github.com/aklt/plantuml-syntax.git'
 Plug 'elubow/cql-vim'
 call plug#end()
+
+let g:plantuml_set_makeprg = 0
 
 set mmp=10000
 let g:riv_python_rst_hl = 0
