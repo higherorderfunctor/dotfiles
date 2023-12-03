@@ -19,6 +19,7 @@ Plug 'elubow/cql-vim'
 call plug#end()
 
 let g:plantuml_set_makeprg = 0
+set colorcolumn=120
 
 set mmp=10000
 let g:riv_python_rst_hl = 0
