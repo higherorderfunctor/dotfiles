@@ -133,6 +133,8 @@ config.font_rules = {
   },
 }
 
+config.term = 'wezterm'
+
 
 -- From: https://stackoverflow.com/a/7470789/5353461
 function merge_tables(t1, t2)
