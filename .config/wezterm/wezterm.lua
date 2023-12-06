@@ -105,7 +105,7 @@ config.font_rules = {
     italic = true,
     font = wezterm.font({
       -- family="Monaspace Radon",  -- script style
-      family='Monaspace Xenon', -- courier-like
+      family='MonaspiceXe Nerd Font Mono', -- courier-like
       style = 'Italic',
     })
   },
@@ -114,8 +114,8 @@ config.font_rules = {
     intensity = 'Bold',
     italic = false,
     font = wezterm.font( {
-      family='Monaspace Krypton',
-      family='Monaspace Krypton',
+      family='MonaspiceKr Nerd Font Mono',
+      -- family='Monaspace Krypton',
       -- weight='ExtraBold',
       weight='Bold',
       })
@@ -125,7 +125,7 @@ config.font_rules = {
     intensity = 'Bold',
     italic = true,
     font = wezterm.font( {
-      family='Monaspace Xenon',
+      family='MonaspiceXe Nerd Font Mono',
       style='Italic',
       weight='Bold',
       }

@@ -1,5 +1,11 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
+vim.g.mapleader = " "
+vim.opt.clipboard = "unnamedplus"
+vim.opt.colorcolumn = "120"
+vim.opt.rtp:prepend(lazypath)
+vim.opt.termguicolors = true
+vim.wo.number = true
 
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -11,9 +17,5 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   })
 end
-
-vim.opt.rtp:prepend(lazypath)
-
-vim.g.mapleader = " "
 
 require("lazy").setup("plugins")

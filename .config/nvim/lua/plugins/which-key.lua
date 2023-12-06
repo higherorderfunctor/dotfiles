@@ -15,6 +15,10 @@ return {
     vim.o.timeoutlen = 200
   end,
   opts = {
+	  --triggers = {"<leader>"},
+	  window = {
+border = "single",
+	  },
     defaults = {
 
  	["<leader>s"] = {
