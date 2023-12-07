@@ -4,40 +4,39 @@ vim.g.loaded_netrw       = 1
 vim.g.loaded_netrwPlugin       = 1
 
 return {
-	{
-"nvim-tree/nvim-web-devicons",
-opts = {
-	color_icons = true,
-	-- default = true
-}
-	},
-	{
 'nvim-tree/nvim-tree.lua',
 lazy = false,
    opts = {
-	   hijack_cursor = true,
-	   sync_root_with_cwd = true,
-	view = {
-		width = {},
-	},
-	modified = { enable = true },
-	ui = {
-		confirm = {
-			default_yes = true
-		}
-	},
-	renderer = {
-		highlight_opened_files = "icon",
-		icons = {
-			web_devicons = {
-				folder = {
-					enable = true
-				}
-			}
-		},
+     hijack_cursor = true,
+     sync_root_with_cwd = true,
+  view = {
+    width = {
+      max = 30
+    },
+  },
+  modified = { enable = true },
+  ui = {
+    confirm = {
+      default_yes = true
+    }
+  },
+  renderer = {
+    highlight_opened_files = "icon",
+     icons = {
+       web_devicons = {
+         folder = {
+          color = true,
+           enable = true
+         },
+         file = {
+          color = true,
+           enable = true
+         }
+       }
+     },
         indent_markers = {
           enable = true,
-	            inline_arrows = true,
+              inline_arrows = true,
           icons = {
             corner = "└",
             edge = "│",
@@ -46,9 +45,11 @@ lazy = false,
             none = " ",
           },
         },
-	},
-	update_focused_file = { enable = true },
-	    filters = {
+  },
+  update_focused_file = { enable = true },
+      filters = {
+        git_ignored = false,
+        dotfiles = false,
       custom = {
         "^.git$",
       },
@@ -73,12 +74,11 @@ local function change_root_to_global_cwd()
 end
 
 local hint = [[
- _c_: Yank Path       _/_: Filter
- _n_: New             _d_: Delete
- _y_: Copy            _x_: Cut           _p_: Paste 
- _r_: Rename          _u_: Rename Full   
- _h_: Toggle Hidden   _?_: Help
- ^
+ _c_: Copy Path       _/_: Filter           _s_: System Open 
+ _n_: New File        _d_: Delete File
+ _y_: Copy File       _x_: Cut File         _p_: Paste File
+ _r_: Rename File     _u_: Edit Path/Rename
+ _h_: Toggle Hidden   _I_: Toggle Ignored   _?_: Help
 ]]
 -- ^ ^           _q_: exit
 
@@ -93,7 +93,7 @@ local function spawn_nvim_tree_hydra()
           name = "NvimTree",
           hint = hint,
           config = {
-              color = "pink",
+              --color = "pink",
               invoke_on_body = true,
               buffer = 0, -- only for active buffer
               hint = {
@@ -106,15 +106,18 @@ local function spawn_nvim_tree_hydra()
           heads = {
               { "c", api.fs.copy.absolute_path,     { silent = true } },
               { "/", api.live_filter.start,         { silent = true } },
+              { "s", api.node.run.system,           { silent = true } },
+              { "n", api.fs.create,                 { silent = true } },
+              { "d", api.fs.remove,                 { silent = true } },
               { "y", api.fs.copy.node,              { silent = true } },
               { "x", api.fs.cut,                    { exit = true, silent = true } },
               { "p", api.fs.paste,                  { exit = true, silent = true } },
               { "r", api.fs.rename,                 { silent = true } },
-              { "d", api.fs.remove,                 { silent = true } },
-              { "n", api.fs.create,                 { silent = true } },
+              { "u", api.fs.rename_full,            { silent = true } },
               { "h", api.tree.toggle_hidden_filter, { silent = true } },
-              { "u", api.fs.rename_full,          { silent = true } },
+              { "I", api.tree.toggle_gitignore_filter, { silent = true } },
               { "?", api.tree.toggle_help,          { silent = true } },
+
               -- { "q", nil, { exit = true, nowait = true } },
           },
       }
@@ -140,5 +143,4 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
     "nvim-tree/nvim-web-devicons",
     "anuvyklack/hydra.nvim",
   },
-  }
 }

@@ -6,6 +6,12 @@ vim.opt.colorcolumn = "120"
 vim.opt.rtp:prepend(lazypath)
 vim.opt.termguicolors = true
 vim.wo.number = true
+vim.opt.tabstop=2
+vim.opt.shiftwidth=2
+vim.opt.softtabstop=2
+vim.opt.expandtab=true
+vim.opt.autoindent=true
+vim.opt.shiftround=true
 
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({

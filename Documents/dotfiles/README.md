@@ -215,3 +215,20 @@ sudo dpkg -i ripgrep_13.0.0_amd64.deb
 
 https://www.nerdfonts.com/font-downloads
 monaspice
+
+
+sudo apt install build-essential libreadline-dev unzip
+-$ curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
+-$ tar -zxf lua-5.3.5.tar.gz
+-$ cd lua-5.3.5
+-$ make linux test
+-$ sudo make install
+cd ..
+curl -R -O https://luarocks.github.io/luarocks/releases/luarocks-3.9.2.tar.gz
+tar -zxf luarocks-3.9.2.tar.gz
+cd luarocks-3.9.2
+./configure --with-lua-include=/usr/local/include
+make
+sudo make install
+cd ..
+rm -rf lua*

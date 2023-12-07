@@ -94,7 +94,7 @@ config.freetype_load_target = 'HorizontalLcd' -- https://wezfurlong.org/wezterm/
 -- Based upon, contributed to:  https://gist.github.com/ErebusBat/9744f25f3735c1e0491f6ef7f3a9ddc3
 config.font = wezterm.font(
   { -- Normal text
-  family='Monaspace Neon',
+  family='MonaspiceNe Nerd Font Mono',
   harfbuzz_features={ 'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08' },
   stretch='UltraCondensed', -- This doesn't seem to do anything
 })
