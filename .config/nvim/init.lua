@@ -25,3 +25,5 @@ if not vim.loop.fs_stat(lazypath) then
 end
 
 require("lazy").setup("plugins")
+
+-- TODO https://github.com/folke/lazy.nvim status line pending updates
