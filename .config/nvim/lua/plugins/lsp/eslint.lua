@@ -1,5 +1,5 @@
 return {
-	"neo  vim/nvim-lspconfig",
+	"neovim/nvim-lspconfig",
 	opts = {
 		servers = { eslint = {} },
 		setup = {
