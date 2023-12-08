@@ -25,7 +25,7 @@ if wezterm.config_builder then
 	config = wezterm.config_builder()
 end
 
-config.window_background_opacity = 0.85
+config.window_background_opacity = 0.90
 
 --
 -- Key assignments
