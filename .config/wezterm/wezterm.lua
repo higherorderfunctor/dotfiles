@@ -1,30 +1,31 @@
 -- Official doco: https://wezfurlong.org/wezterm/config/files.html
 
-local wezterm = require 'wezterm'  -- Pull in the wezterm API
-local act = wezterm.action  -- for binding keys to actions
+local wezterm = require("wezterm") -- Pull in the wezterm API
+local act = wezterm.action -- for binding keys to actions
 local gpus = wezterm.gui.enumerate_gpus()
-local mux = wezterm.mux  -- multiplexer layer: panes, tabs, windows, and workspaces
+local mux = wezterm.mux -- multiplexer layer: panes, tabs, windows, and workspaces
 
 -- local scheme = wezterm.get_builtin_color_schemes()["nord"]
 -- local keybinds = require 'keybinds'
 -- local utils = require("utils")
 -- require("on")
 
-
 -- Debug
 wezterm.log_level = "debug"
 -- After restarting WezTerm:
-  -- $HOME/.local/share/wezterm/logs/ (on Linux/macOS)
-  -- %APPDATA%\wezterm\logs\ (on Windows)
+-- $HOME/.local/share/wezterm/logs/ (on Linux/macOS)
+-- %APPDATA%\wezterm\logs\ (on Windows)
 
 --- Config struct documentation
 -- https://wezfurlong.org/wezterm/config/lua/config/index.html
-local config = {}  -- This table will hold the configuration.
+local config = {} -- This table will hold the configuration.
 -- In newer versions of wezterm, use the config_builder which will
 -- help provide clearer error messages
 if wezterm.config_builder then
-  config = wezterm.config_builder()
+	config = wezterm.config_builder()
 end
+
+config.window_background_opacity = 0.85
 
 --
 -- Key assignments
@@ -56,23 +57,23 @@ config.hyperlink_rules = wezterm.default_hyperlink_rules()
 -- https://www.lua.org/pil/2.4.html#:~:text=bracketed%20form%20may%20run%20for%20several%20lines%2C%20may%20nest
 
 table.insert(config.hyperlink_rules, {
-  -- https://github.com/shinnn/github-username-regex  https://stackoverflow.com/a/64147124/5353461
-  regex = [[(^|(?<=[\[(\s'"]))([0-9A-Za-z][-0-9A-Za-z]{0,38})/([A-Za-z0-9_.-]{1,100})((?=[])\s'".!?])|$)]],
-  --  is/good  0valid0/-_.reponname  /bad/start  -bad/username  bad/end!  too/many/parts -bad/username
-  --  [wraped/name] (aa/bb) 'aa/bb' "aa/bb"  end/punct!  end/punct.
-  format = 'https://www.github.com/$2/$3/',
-  -- highlight = 0,  -- highlight this regex match group, use 0 for all
+	-- https://github.com/shinnn/github-username-regex  https://stackoverflow.com/a/64147124/5353461
+	regex = [[(^|(?<=[\[(\s'"]))([0-9A-Za-z][-0-9A-Za-z]{0,38})/([A-Za-z0-9_.-]{1,100})((?=[])\s'".!?])|$)]],
+	--  is/good  0valid0/-_.reponname  /bad/start  -bad/username  bad/end!  too/many/parts -bad/username
+	--  [wraped/name] (aa/bb) 'aa/bb' "aa/bb"  end/punct!  end/punct.
+	format = "https://www.github.com/$2/$3/",
+	-- highlight = 0,  -- highlight this regex match group, use 0 for all
 })
 
 --
 -- Miscellaneous
 --
 
-config.enable_scroll_bar=true
+config.enable_scroll_bar = true
 config.hide_tab_bar_if_only_one_tab = true
 config.initial_cols = 140
 config.initial_rows = 40
-config.exit_behavior = "CloseOnCleanExit"  -- Use 'Hold' to not close
+config.exit_behavior = "CloseOnCleanExit" -- Use 'Hold' to not close
 
 --
 -- Fonts
@@ -88,64 +89,61 @@ config.exit_behavior = "CloseOnCleanExit"  -- Use 'Hold' to not close
 -- config.font = wezterm.font({ family = 'Iosevka SS06', stretch = 'UltraCondensed'})
 config.font_size = 13.8
 config.warn_about_missing_glyphs = true
-config.freetype_load_target = 'HorizontalLcd' -- https://wezfurlong.org/wezterm/config/lua/config/freetype_load_target.html
+config.freetype_load_target = "HorizontalLcd" -- https://wezfurlong.org/wezterm/config/lua/config/freetype_load_target.html
 
 -- Monaspace:  https://monaspace.githubnext.com/
 -- Based upon, contributed to:  https://gist.github.com/ErebusBat/9744f25f3735c1e0491f6ef7f3a9ddc3
-config.font = wezterm.font(
-  { -- Normal text
-  family='MonaspiceNe Nerd Font Mono',
-  harfbuzz_features={ 'calt', 'liga', 'dlig', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08' },
-  stretch='UltraCondensed', -- This doesn't seem to do anything
+config.font = wezterm.font({ -- Normal text
+	family = "MonaspiceNe Nerd Font Mono",
+	harfbuzz_features = { "calt", "liga", "dlig", "ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07", "ss08" },
+	stretch = "UltraCondensed", -- This doesn't seem to do anything
 })
 
 config.font_rules = {
-  { -- Italic
-    intensity = 'Normal',
-    italic = true,
-    font = wezterm.font({
-      -- family="Monaspace Radon",  -- script style
-      family='MonaspiceXe Nerd Font Mono', -- courier-like
-      style = 'Italic',
-    })
-  },
+	{ -- Italic
+		intensity = "Normal",
+		italic = true,
+		font = wezterm.font({
+			-- family="Monaspace Radon",  -- script style
+			family = "MonaspiceXe Nerd Font Mono", -- courier-like
+			style = "Italic",
+		}),
+	},
 
-  { -- Bold
-    intensity = 'Bold',
-    italic = false,
-    font = wezterm.font( {
-      family='MonaspiceKr Nerd Font Mono',
-      -- family='Monaspace Krypton',
-      -- weight='ExtraBold',
-      weight='Bold',
-      })
-  },
+	{ -- Bold
+		intensity = "Bold",
+		italic = false,
+		font = wezterm.font({
+			family = "MonaspiceKr Nerd Font Mono",
+			-- family='Monaspace Krypton',
+			-- weight='ExtraBold',
+			weight = "Bold",
+		}),
+	},
 
-  { -- Bold Italic
-    intensity = 'Bold',
-    italic = true,
-    font = wezterm.font( {
-      family='MonaspiceXe Nerd Font Mono',
-      style='Italic',
-      weight='Bold',
-      }
-    )
-  },
+	{ -- Bold Italic
+		intensity = "Bold",
+		italic = true,
+		font = wezterm.font({
+			family = "MonaspiceXe Nerd Font Mono",
+			style = "Italic",
+			weight = "Bold",
+		}),
+	},
 }
 
-config.term = 'wezterm'
-
+config.term = "wezterm"
 
 -- From: https://stackoverflow.com/a/7470789/5353461
 function merge_tables(t1, t2)
-    for k, v in pairs(t2) do
-        if (type(v) == "table") and (type(t1[k] or false) == "table") then
-            merge_tables(t1[k], t2[k])
-        else
-            t1[k] = v
-        end
-    end
-    return t1
+	for k, v in pairs(t2) do
+		if (type(v) == "table") and (type(t1[k] or false) == "table") then
+			merge_tables(t1[k], t2[k])
+		else
+			t1[k] = v
+		end
+	end
+	return t1
 end
 -- config = merge_tables(config, font_config)
 
