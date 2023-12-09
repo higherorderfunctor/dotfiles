@@ -243,3 +243,8 @@ sudo install lazygit /usr/local/bin
 
 sudo apt install fd-find
 ln -s $(which fdfind)
+
+
+curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/.local/bin
+
+

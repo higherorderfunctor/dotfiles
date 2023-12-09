@@ -133,6 +133,16 @@ config.font_rules = {
 }
 
 config.term = "wezterm"
+local custom = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
+custom.background = "#000000"
+custom.tab_bar.background = "#040404"
+custom.tab_bar.inactive_tab.bg_color = "#0f0f0f"
+custom.tab_bar.new_tab.bg_color = "#080808"
+
+config.color_schemes = {
+	["OLEDppuccin"] = custom,
+}
+config.color_scheme = "OLEDppuccin"
 
 -- From: https://stackoverflow.com/a/7470789/5353461
 function merge_tables(t1, t2)

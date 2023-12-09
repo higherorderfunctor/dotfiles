@@ -14,6 +14,13 @@ plugins=(
 # fzf plugin
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+if [[ ! -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting ]]; then
+  git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
+  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
+fi
+
+plugins+=('fast-syntax-highlighting')
+
 # oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 
@@ -56,3 +63,7 @@ esac
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+eval "$(oh-my-posh init zsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/catppuccin_mocha.omp.json')"
+
+fast-theme XDG:catppuccin-mocha
