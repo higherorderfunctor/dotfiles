@@ -23,7 +23,7 @@ require("lazy").setup({
 		version = false,
 	},
 	colorschem = {
-		colorscheme = { "catppuccin", "habamax" },
+		colorscheme = { "catppuccin" },
 	},
 	checker = { enabled = true },
 	rtp = {

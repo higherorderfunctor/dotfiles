@@ -5,7 +5,6 @@ return {
 	opts = {
 		theme = "catppuccin",
 		show_dirname = false,
-		show_basename = false,
 	},
 	dependencies = {
 		"SmiteshP/nvim-navic",

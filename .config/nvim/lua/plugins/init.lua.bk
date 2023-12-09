@@ -1,0 +1,22 @@
+return {
+	{
+		"LazyVim/LazyVim",
+		opts = {
+			colorscheme = "catppuccin",
+		},
+	},
+}
+-- -- delete trailing
+-- TODO keybind N for tele notify
+
+
+
+
+
+
+
+
+
+
+
+              
