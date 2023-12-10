@@ -19,7 +19,7 @@ install-bruno() {
 
 	{
 		set -x
-		curl -fLo "$BRUNO" https://github.com/usebruno/bruno/releases/download/v1.2.0/bruno_1.2.0_x86_64_linux.AppImage
+		curl -fLo "$BRUNO" https://github.com/usebruno/bruno/releases/download/v1.4.0/bruno_1.4.0_x86_64_linux.AppImage
 		chmod u+x "$BRUNO"
 
 	}
