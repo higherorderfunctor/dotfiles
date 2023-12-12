@@ -217,7 +217,6 @@ https://www.nerdfonts.com/font-downloads
 monaspice
 
 
-sudo apt install build-essential libreadline-dev unzip
 -$ curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
 -$ tar -zxf lua-5.3.5.tar.gz
 -$ cd lua-5.3.5
@@ -240,11 +239,4 @@ curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/lates
 tar xf lazygit.tar.gz lazygit
 sudo install lazygit /usr/local/bin
 
-
-sudo apt install fd-find
-ln -snf $(which fdfind) ~/.local/bin/fd
-
-
 curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/.local/bin
-
-sudo apt install gawk
