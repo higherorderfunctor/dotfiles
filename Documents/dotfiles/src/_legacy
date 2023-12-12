@@ -53,6 +53,7 @@ declare -a packages=(
 	antiword # for recoll
 	aspell   # for recoll
 	bindfs
+	bugwarrior
 	colorized-logs # for ansi2txt to remove stupid color when deep searching logs
 	fd-find
 	gajim
