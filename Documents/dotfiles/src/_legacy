@@ -54,6 +54,7 @@ declare -a packages=(
 	aspell   # for recoll
 	bindfs
 	colorized-logs # for ansi2txt to remove stupid color when deep searching logs
+	fd-find
 	gajim
 	gajim-omemo
 	gawk
@@ -74,6 +75,8 @@ declare -a packages=(
 )
 
 sudo apt-get update && sudo apt-get upgrade && sudo snap refresh
+
+ln -snf $(which fdfind) ~/.local/bin/fd
 
 (
 	UBUNTU_CODENAME="$(grep -oE "UBUNTU_CODENAME=\S+" </etc/os-release | cut -d'=' -f2)"
