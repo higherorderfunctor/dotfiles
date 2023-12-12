@@ -5,7 +5,7 @@ set -euETo pipefail
 shopt -s inherit_errexit
 
 dotfiles() {
-  /usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
+	/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
 }
 
 # DOTFILES_SECURE=true
@@ -31,14 +31,15 @@ dotfiles submodule update --init --recursive
 
 # add new dotfiles
 dotfiles add "$HOME/Documents/dotfiles" -f
+dotfiles add "$HOME/.config/nvim" -f
 
 # commit dotfiles if changed
 dotfiles commit ~/.local/bin/dotfiles-update "$HOME/Documents/dotfiles" -m 'chore(bot): dotfiles-update updated' || true
 
 # determine no pending changes that will be lost
 dotfiles update-index --refresh
-dotfiles diff-index --quiet HEAD -- || \
-  echo "ERROR: commit or revert changes or they will be lost"
+dotfiles diff-index --quiet HEAD -- ||
+	echo "ERROR: commit or revert changes or they will be lost"
 
 # update each submodule to HEAD of default branch
 # shellcheck disable=SC2016
