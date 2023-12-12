@@ -209,9 +209,9 @@ pnpm exec node --version
 
 # Extra
 
-curl -LO https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep_13.0.0_amd64.deb
-sudo dpkg -i ripgrep_13.0.0_amd64.deb
-
+```
+curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.0.3/ripgrep_14.0.3-1_amd64.deb
+sudo dpkg -i ripgrep_14.0.3-1_amd64.deb
 
 https://www.nerdfonts.com/font-downloads
 monaspice
@@ -237,6 +237,12 @@ rm -rf lua*
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
 curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
 tar xf lazygit.tar.gz lazygit
+cd lazygit
+
+sudo apt install fd-find
+ln -snf $(which fdfind) ~/.local/bin/fd
+
 sudo install lazygit /usr/local/bin
 
 curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/.local/bin
+```
