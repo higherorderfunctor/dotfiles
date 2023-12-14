@@ -1,5 +1,5 @@
 [user]
-	name = Christopher Aubut
+  name = Christopher Aubut
   email = christopher@aubut.me
 [includeIf "gitdir:~/Documents/work/"]
     path = ~/Documents/work/.gitconfig
@@ -10,6 +10,6 @@
 [mergetool]
   prompt = false
 [pull]
-	ff = only
+  ff = only
 [push]
-	autoSetupRemote = true
+  autoSetupRemote = true
