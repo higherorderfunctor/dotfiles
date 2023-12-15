@@ -1,8 +1,8 @@
 [user]
-  name = Christopher Aubut
+	name = Christopher Aubut
   email = christopher@aubut.me
 [includeIf "gitdir:~/Documents/work/"]
-    path = ~/Documents/work/.gitconfig
+  path = ~/Documents/work/.gitconfig
 [mergetool "nvim"]
   cmd = nvim -f -c \"Gdiffsplit!\" \"$MERGED\"
 [merge]
