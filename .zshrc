@@ -64,7 +64,7 @@ esac
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-eval "$(oh-my-posh init zsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/catppuccin_mocha.omp.json')"
+eval "$(oh-my-posh init zsh --config '~/.config/oh-my-posh/catppuccin.omp.json')"
 
 if ! fast-theme --show | grep -q 'catppuccin-mocha'; then
   fast-theme XDG:catppuccin-mocha
