@@ -10,7 +10,7 @@ return {
 			-- disable a keymap
 			-- keys[#keys + 1] = { "K", false }
 			-- add a keymap
-			keys[#keys + 1] = { "<leader>xr", "<cmd>LspRestart<cr>", desc = "Restart LSP" }
+			keys[#keys + 1] = { "<leader>cz", "<cmd>LspRestart<cr>", desc = "Restart LSP" }
 		end,
 	},
 }
