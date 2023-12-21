@@ -16,7 +16,7 @@ return {
 	{
 		"folke/edgy.nvim",
 		opts = function(_, opts)
-			opts.options = { left = { size = 65 } }
+			--	opts.options = { left = { size = 65 } }
 			opts.left[1].open = function()
 				vim.api.nvim_input("<esc><space>E")
 			end
