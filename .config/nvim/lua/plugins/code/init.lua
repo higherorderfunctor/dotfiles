@@ -3,6 +3,8 @@ return {
 	require("plugins.code.copilot"),
 	require("plugins.code.eslint"),
 	require("plugins.code.luasnip"),
+	require("plugins.code.mason"),
+	require("plugins.code.nvim-lint"),
 	-- {
 	-- 	"hrsh7th/nvim-cmp",
 	-- 	opts = function(_, opts)
