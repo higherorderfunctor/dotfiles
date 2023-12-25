@@ -249,4 +249,8 @@ curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/.local/bin
 
 
 curl https://sh.rustup.rs -sSf | sh
+
+sh <(curl -L https://nixos.org/nix/install) --no-daemon
+
+nix --extra-experimental-features nix-command --extra-experimental-features flakes profile install github:kamadorueda/alejandra/3.0.0
 ```
