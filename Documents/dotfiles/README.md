@@ -245,4 +245,8 @@ ln -snf $(which fdfind) ~/.local/bin/fd
 sudo install lazygit /usr/local/bin
 
 curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/.local/bin
+
+
+
+curl https://sh.rustup.rs -sSf | sh
 ```

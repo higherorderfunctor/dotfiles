@@ -1,26 +1,27 @@
 return {
-	"williamboman/mason-lspconfig.nvim",
+	"WhoIsSethDaniel/mason-tool-installer",
 	opts = {
 		automatic_installation = true,
 		ensure_installed = {
-			"beautysh",
-			"bash-language-server bashls",
-			"docker-compose-language-service docker_compose_language_service",
-			"dockerfile-language-server dockerls",
-			"eslint-lsp eslint",
-			"hadolint",
-			"json-lsp jsonls",
-			"lua-language-server lua_ls",
-			"luacheck",
-			"luaformatter",
-			"markdownlint",
-			"marksman",
-			"shellcheck",
-			"shfmt",
-			"stylua",
-			"typescript-language-server tsserver",
-			"vim-language-server vimls",
-			"yaml-language-server yamlls",
+			"beautysh", -- format*
+			"bash-language-server", -- lsp*
+			"docker-compose-language-service", -- lsp*
+			"dockerfile-language-server", -- lsp*
+			"eslint-lsp", -- lsp*
+			"hadolint", -- lint*
+			"json-lsp", -- lsp*
+			"lua-language-server", -- lsp*
+			"luacheck", -- lint - luarocks
+			"luaformatter", -- format - luarocks cmake
+			"markdownlint", -- lint* format*
+			"marksman", -- lsp*
+			"nil", -- lsp* - cargo
+			"shellcheck", -- lint*
+			"shfmt", -- format*
+			"stylua", -- format*
+			"typescript-language-server", -- lsp*
+			"vim-language-server", -- lsp*
+			"yaml-language-server", -- lsp*
 		},
 	},
 }
