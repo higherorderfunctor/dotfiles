@@ -11,15 +11,17 @@ return {
 			"hadolint", -- lint*
 			"json-lsp", -- lsp*
 			"lua-language-server", -- lsp*
-			"luacheck", -- lint - luarocks
+			"luacheck", -- lint* - luarocks
 			"luaformatter", -- format - luarocks cmake
 			"markdownlint", -- lint* format*
 			"marksman", -- lsp*
 			"nil", -- lsp* - cargo
 			"shellcheck", -- lint*
 			"shfmt", -- format*
+			"spectral-language-server", -- lsp
 			"stylua", -- format*
 			"typescript-language-server", -- lsp*
+			"vacuum", -- linter
 			"vim-language-server", -- lsp*
 			"yaml-language-server", -- lsp*
 		},
