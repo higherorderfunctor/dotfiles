@@ -11,9 +11,10 @@ return {
 	opts = {
 		linters_by_ft = {
 			bash = { "shellcheck", "shellharden" },
-			markdown = { "markdownlint" },
-			lua = { "luacheck" },
 			docker = { "hadolint" },
+			lua = { "luacheck" },
+			markdown = { "markdownlint" },
+			nix = { "statix" },
 		},
 	},
 	keys = {
