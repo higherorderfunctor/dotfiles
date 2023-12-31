@@ -5,6 +5,7 @@ return {
 	require("plugins.code.luasnip"),
 	require("plugins.code.mason"),
 	require("plugins.code.nvim-lint"),
+	require("plugins.code.null-ls"),
 	-- {
 	-- 	"hrsh7th/nvim-cmp",
 	-- 	opts = function(_, opts)

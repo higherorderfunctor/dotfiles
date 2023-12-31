@@ -15,6 +15,7 @@ return {
 			lua = { "luacheck" },
 			markdown = { "markdownlint" },
 			openapi = { "vacuum" },
+			nix = { "statix" },
 		},
 	},
 	keys = {
