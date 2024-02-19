@@ -66,10 +66,10 @@ install-wezterm() {
 }
 
 update-wezterm() {
-    if ! command -v wezterm; then
-        print-info "==> installing\n"
-        install-wezterm
-    fi
+    #if ! command -v wezterm; then
+    print-info "==> installing\n"
+    install-wezterm
+    #fi
     # if [[ ! -d /tmp/monaspace ]]; then
     #   cd /tmp
     #   git clone --depth 1 https://github.com/githubnext/monaspace.git
