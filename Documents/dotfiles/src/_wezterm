@@ -19,7 +19,7 @@ install-wezterm() {
 
     {
         set -x
-        curl -fLo "$WEZTERM" https://github.com/wez/wezterm/releases/download/20240203-110809-5046fc22/wezterm-20240203-110809-5046fc22.Debian10.deb
+        curl -fLo "$WEZTERM" https://github.com/wez/wezterm/releases/download/20230712-072601-f4abf8fd/wezterm-20230712-072601-f4abf8fd.Ubuntu22.04.deb
         sudo dpkg -i "$WEZTERM"
         sudo update-alternatives --config x-terminal-emulator
         # curl -fLo "$WEZTERM" https://github.com/wez/wezterm/releases/download/20230712-072601-f4abf8fd/WezTerm-20230712-072601-f4abf8fd-Ubuntu20.04.AppImage
@@ -66,10 +66,10 @@ install-wezterm() {
 }
 
 update-wezterm() {
-    #if ! command -v wezterm; then
-    print-info "==> installing\n"
-    install-wezterm
-    #fi
+    if ! command -v wezterm; then
+        print-info "==> installing\n"
+        install-wezterm
+    fi
     # if [[ ! -d /tmp/monaspace ]]; then
     #   cd /tmp
     #   git clone --depth 1 https://github.com/githubnext/monaspace.git
