@@ -9,7 +9,7 @@ plugins=(
 )
 
 # poetry plugin
-[[ -f ~/.local/bin/poetry ]] && plugins+=('poetry')
+# [[ -f ~/.local/bin/poetry ]] && plugins+=('poetry')
 
 # fzf plugin
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
