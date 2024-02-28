@@ -190,14 +190,6 @@ cp -R ~/.gnupg <VAULT_MOUNT_POINT>/Backups/Home/$(hostname)
 vault unmount local <VAULT>
 ```
 
-# Ansible
-
-## Activating
-
-```console
-. "$HOME/.local/share/ansible/bin/activate"
-```
-
 # NodeJS
 Download the latest LTS or Current version of [nodejs](https://nodejs.org/en/download/current).
 
@@ -210,47 +202,22 @@ pnpm exec node --version
 # Extra
 
 ```
-curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.0.3/ripgrep_14.0.3-1_amd64.deb
-sudo dpkg -i ripgrep_14.0.3-1_amd64.deb
-
 https://www.nerdfonts.com/font-downloads
 monaspice
+```
 
+## Nix
 
--$ curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
--$ tar -zxf lua-5.3.5.tar.gz
--$ cd lua-5.3.5
--$ make linux test
--$ sudo make install
-cd ..
-curl -R -O https://luarocks.github.io/luarocks/releases/luarocks-3.9.2.tar.gz
-tar -zxf luarocks-3.9.2.tar.gz
-cd luarocks-3.9.2
-./configure --with-lua-include=/usr/local/include
-make
-sudo make install
-cd ..
-rm -rf lua*
+```sh
+# https://github.com/nix-community/home-manager/issues/4692
+sh <(curl -L https://releases.nixos.org/nix/nix-2.18.1/install) --daemon
 
+# update
+nix flake update
 
+# build
+nix build .#homeConfigurations.caubut.activationPackage
 
-LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
-tar xf lazygit.tar.gz lazygit
-cd lazygit
-
-sudo apt install fd-find
-ln -snf $(which fdfind) ~/.local/bin/fd
-
-sudo install lazygit /usr/local/bin
-
-curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/.local/bin
-
-
-
-curl https://sh.rustup.rs -sSf | sh
-
-sh <(curl -L https://nixos.org/nix/install) --no-daemon
-
-nix --extra-experimental-features nix-command --extra-experimental-features flakes profile install github:kamadorueda/alejandra/3.0.0
+# activate
+./result/activate
 ```
