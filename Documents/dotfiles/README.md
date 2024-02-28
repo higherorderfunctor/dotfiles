@@ -220,4 +220,15 @@ nix build .#homeConfigurations.caubut.activationPackage
 
 # activate
 ./result/activate
+
+# list generations
+home-manager generations
+
+# clean up
+home-manager remove-generations ID
+home-manager expire-generations TIMESTAMP
+
+nix profile history
+nix profile wipe-history
+nix store gc
 ```

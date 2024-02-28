@@ -22,6 +22,7 @@
     ./luarocks.nix
     ./nix-index.nix
     ./nixd.nix
+    ./nodejs_20.nix
     ./nvim
     ./ripgrep.nix
     ./rust.nix
@@ -31,6 +32,7 @@
     ./tmux.nix
     ./unzip.nix
     ./wget.nix
+    ./xclip.nix
     ./zsh-fast-syntax-highlighting.nix
     ./zsh.nix
   ];
