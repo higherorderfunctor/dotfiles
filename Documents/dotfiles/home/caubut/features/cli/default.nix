@@ -9,6 +9,7 @@
     ./alejandra.nix
     ./bash.nix
     ./beautysh.nix
+    ./bun.nix
     ./cmake.nix
     ./curl.nix
     ./deadnix.nix
