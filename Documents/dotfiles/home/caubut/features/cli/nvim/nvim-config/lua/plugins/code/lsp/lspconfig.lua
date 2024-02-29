@@ -1,8 +1,11 @@
+vim.lsp.set_log_level("debug")
+
 return {
   "neovim/nvim-lspconfig",
   opts = {
     servers = {
       marksman = {},
+      nil_ls = {},
       nixd = {},
     },
   },

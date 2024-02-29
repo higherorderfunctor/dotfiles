@@ -22,6 +22,7 @@
     ./less.nix
     ./luajit.nix
     ./luarocks.nix
+    ./nil.nix
     ./nix-index.nix
     ./nixd.nix
     ./nodejs_20.nix
