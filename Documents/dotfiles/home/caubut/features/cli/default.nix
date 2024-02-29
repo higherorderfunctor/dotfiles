@@ -1,5 +1,6 @@
 {
   imports = [
+    ./nix.nix
     # ./bitwarden-cli.nix
     # ./git.nix
     # ./keybase.nix

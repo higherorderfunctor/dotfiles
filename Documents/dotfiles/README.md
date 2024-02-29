@@ -1,5 +1,32 @@
 # Dotfiles
 
+## Nix
+
+```sh
+# https://github.com/nix-community/home-manager/issues/4692
+sh <(curl -L https://releases.nixos.org/nix/nix-2.18.1/install) --daemon
+
+# update
+nix flake update
+
+# build
+nix run .#homeConfigurations.caubut.activationPackage -- build . switch
+
+# list generations
+home-manager generations
+
+# clean up
+home-manager remove-generations ID
+home-manager expire-generations TIMESTAMP
+
+nix profile history
+nix profile wipe-history
+nix store gc
+
+# see why a package is a dependency
+LD_LIBRARY_PATH= nix why-depends .#homeConfigurations.caubut.activationPackage /nix/store/...
+```
+
 ## Setup
 
 ### Secure System
@@ -204,31 +231,4 @@ pnpm exec node --version
 ```
 https://www.nerdfonts.com/font-downloads
 monaspice
-```
-
-## Nix
-
-```sh
-# https://github.com/nix-community/home-manager/issues/4692
-sh <(curl -L https://releases.nixos.org/nix/nix-2.18.1/install) --daemon
-
-# update
-nix flake update
-
-# build
-nix build .#homeConfigurations.caubut.activationPackage
-
-# activate
-./result/activate
-
-# list generations
-home-manager generations
-
-# clean up
-home-manager remove-generations ID
-home-manager expire-generations TIMESTAMP
-
-nix profile history
-nix profile wipe-history
-nix store gc
 ```
