@@ -24,7 +24,7 @@ nix profile wipe-history
 nix store gc
 
 # see why a package is a dependency
-LD_LIBRARY_PATH= nix why-depends .#homeConfigurations.caubut.activationPackage /nix/store/...
+nix why-depends .#homeConfigurations.caubut.activationPackage /nix/store/...
 ```
 
 ## Setup
