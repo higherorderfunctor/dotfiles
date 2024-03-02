@@ -8,32 +8,21 @@ declare -a packages=(
     antiword # for recoll
     aspell   # for recoll
     bindfs
-    bugwarrior
     colorized-logs # for ansi2txt to remove stupid color when deep searching logs
-    fd-find
     gajim
     gajim-omemo
     gawk
-    jq
     libimage-exiftool-perl # for recoll
-    moolticute
-    poppler-utils # for recoll
+    poppler-utils          # for recoll
     python3.11-venv
     recollcmd
     shellcheck
     sxiv # image viewer
-    tmux
     wl-clipboard
     build-essential
     libreadline-dev
-    unzip
     wv # for recoll
-    xclip
 )
-
-sudo apt-get update && sudo apt-get upgrade && sudo snap refresh
-
-ln -snf $(which fdfind) ~/.local/bin/fd
 
 (
     UBUNTU_CODENAME="$(grep -oE "UBUNTU_CODENAME=\S+" </etc/os-release | cut -d'=' -f2)"

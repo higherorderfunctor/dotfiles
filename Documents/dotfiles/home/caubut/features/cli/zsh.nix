@@ -12,7 +12,7 @@ in {
     enable = true;
     package = pkgs.zsh;
     enableCompletion = true;
-    completionInit = strings.concatMapStrings (s: s + " && ") [
+    completionInit = strings.concatStringsSep " && " [
       "autoload -U compinit -d ${dataHome}/.zcompdump"
       "compinit -d ${dataHome}/.zcompdump"
     ];
@@ -22,10 +22,10 @@ in {
       path = "${dataHome}/zsh_history";
     };
     shellAliases = {
-      dotfiles = "alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'";
-      l = "alias l='ls -lah'";
-      la = "alias la='ls -lAh'";
-      ll = "alias ll='ls -lh'";
+      dotfiles = "git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME";
+      ls = "ls --color=auto";
+      l = "ls -lah";
+      ll = "ls -lh";
     };
     # TODO: https://thevaluable.dev/zsh-completion-guide-examples/
     initExtraBeforeCompInit = ''
@@ -72,6 +72,9 @@ in {
       bindkey "^[[1;5D" backward-word              # ctrl + left arrow
       bindkey "^[[Z" reverse-menu-complete         # shift + tab
       bindkey "^?" backward-delete-char            # backspace
+
+      # colors
+      zstyle ':completion:*:default' list-colors ''${(s.:.)LS_COLORS}
     '';
   };
   # TODO use xdg everywhere

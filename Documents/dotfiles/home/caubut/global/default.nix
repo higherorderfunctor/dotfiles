@@ -15,7 +15,6 @@ in {
     ../features/cli
     ../features/desktop
     ../features/colors/catppuccin-mocha.nix
-    # ../features/neovim
   ];
 
   nixpkgs = {
@@ -29,8 +28,8 @@ in {
 
   programs = {
     home-manager.enable = true;
-    # oh-my-posh.enable = true;
-    starship.enable = true;
+    oh-my-posh.enable = true;
+    # starship.enable = true;
     # ssh.enable = true;
   };
 

@@ -1,5 +1,3 @@
 {pkgs, ...}: {
-  home.packages = [
-    pkgs.bruno
-  ];
+  home.packages = [pkgs.bruno];
 }
