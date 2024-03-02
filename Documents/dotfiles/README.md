@@ -9,7 +9,6 @@ sh <(curl -L https://releases.nixos.org/nix/nix-2.18.1/install) --daemon
 # update
 nix flake update
 
-# build
 nix run .#homeConfigurations.caubut.activationPackage -- build . switch
 
 # list generations

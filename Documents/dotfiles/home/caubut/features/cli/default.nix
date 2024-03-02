@@ -3,8 +3,8 @@
     # ./lshw.nix
     # ./pciutils.nix
     # ./usbutils.nix
-    ./keybase.nix
     ./alejandra.nix
+    ./aspell.nix
     ./bash.nix
     ./beautysh.nix
     ./bitwarden.nix
@@ -15,10 +15,12 @@
     ./dircolors.nix
     ./fd.nix
     ./fzf.nix
+    ./gawk.nix
     ./gcc.nix
     ./git.nix
     ./gnumake.nix
     ./jq.nix
+    ./keybase.nix
     ./lazygit.nix
     ./less.nix
     ./luajit.nix
@@ -33,6 +35,7 @@
     ./rclone.nix
     ./ripgrep.nix
     ./rust.nix
+    ./shellcheck.nix
     ./sqlite.nix
     ./starship.nix
     ./statix.nix
