@@ -22,6 +22,7 @@
     ./jq.nix
     ./keybase.nix
     ./lazygit.nix
+    ./lcov.nix
     ./less.nix
     ./luajit.nix
     ./luarocks.nix
