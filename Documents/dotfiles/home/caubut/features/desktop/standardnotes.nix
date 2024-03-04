@@ -26,8 +26,8 @@
 {
   home.packages = [
     pkgs.standardnotes
-    inputs.nix-gl-host.defaultPackage.x86_64-linux
-    pkgs.libcanberra-gtk3
-    pkgs.mesa
+    # inputs.nix-gl-host.defaultPackage.x86_64-linux
+    # pkgs.libcanberra-gtk3
+    # pkgs.mesa
   ];
 }

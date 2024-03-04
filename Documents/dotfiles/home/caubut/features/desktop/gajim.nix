@@ -1,3 +1,3 @@
-{}
-#     gajim
-#     gajim-omemo
+{pkgs, ...}: {
+  home.packages = [pkgs.gajim];
+}

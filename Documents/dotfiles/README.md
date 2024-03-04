@@ -24,6 +24,9 @@ nix store gc
 
 # see why a package is a dependency
 nix why-depends .#homeConfigurations.caubut.activationPackage /nix/store/...
+
+
+# TODO cachix
 ```
 
 ## Setup

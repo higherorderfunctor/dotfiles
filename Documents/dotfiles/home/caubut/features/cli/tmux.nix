@@ -4,6 +4,7 @@
   pkgs,
   ...
 }: let
+  # TODO: fix me
   tmux-which-key =
     pkgs.tmuxPlugins.mkTmuxPlugin
     {
@@ -31,14 +32,6 @@ in {
     # set -g default-terminal "wezterm"
     # set -as terminal-features ",gnome*:RGB"
     # set -ag terminal-overrides ",xterm-256color:RGB"
-    #
-    # bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
-    # bind-key -T copy-mode-vi Enter             send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
-    # bind-key -T copy-mode-vi 'y'               send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
-    # bind-key -T copy-mode-vi 'v' send -X       begin-selection
-    #
-    # bind-key ! break-pane -d -n _hidden_pane
-    # bind-key @ join-pane -s $.0
     tmux = {
       enable = true;
       package = pkgs.tmux;
@@ -47,11 +40,14 @@ in {
       keyMode = "vi";
       mouse = true;
       terminal = "screen-256color";
-      # extraConfig = ''
-      #   set -as terminal-features ',rxvt-unicode-256color:clipboard'
+      extraConfig = ''
+        set-option -g focus-events on
 
-      #   set-option -g focus-events on
-      # '';
+        bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
+        bind-key -T copy-mode-vi Enter             send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
+        bind-key -T copy-mode-vi 'y'               send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
+        bind-key -T copy-mode-vi 'v' send -X       begin-selection
+      '';
       plugins = [
         {
           plugin = pkgs.tmuxPlugins.catppuccin;
