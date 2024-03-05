@@ -34,6 +34,7 @@ return {
           --     -- crust = "#11111b",
           return {
             NeoTreeSymbolicLinkTarget = { fg = colors.peach },
+            NeoTreeExecutableTarget = { fg = colors.green },
             NotifyBackground = { bg = colors.base },
             SpellBad = { fg = colors.crust, bg = colors.red },
             CursorLine = { bg = colors.crust },

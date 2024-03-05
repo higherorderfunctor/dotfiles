@@ -18,6 +18,23 @@ return {
           ["O"] = "system_open",
         },
       },
+      components = {
+        name = function(config, node, state)
+          local fc = require("neo-tree.sources.filesystem.components")
+          local result = fc.name(config, node, state)
+          if vim.fn.isdirectory(node.path) ~= 0 then
+            return result
+          end
+          local permissions = vim.fn.getfperm(node.path)
+          if string.match(permissions, "x", 3) then
+            result.text = result.text .. " 󱆃"
+            if result.highlight == "NeoTreeFileName" then
+              result.highlight = "NeoTreeExecutableTarget"
+            end
+          end
+          return result
+        end,
+      },
       commands = {
         -- move deleted files to the trash
         delete = function(state)
