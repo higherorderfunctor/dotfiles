@@ -18,13 +18,15 @@ home-manager generations
 home-manager remove-generations ID
 home-manager expire-generations TIMESTAMP
 
+./scripts/remove-generations
+
 nix profile history
 nix profile wipe-history
 nix store gc
 
 # see why a package is a dependency
+nix-store -q --tree ~/.nix-profile
 nix why-depends .#homeConfigurations.caubut.activationPackage /nix/store/...
-
 
 # TODO cachix
 ```
