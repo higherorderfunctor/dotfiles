@@ -4,6 +4,7 @@
     ./bruno.nix
     ./chromium.nix
     ./discord.nix
+    ./evolution.nix
     ./firefox.nix
     ./gajim.nix
     ./gimp.nix
@@ -11,6 +12,7 @@
     ./keybase.nix
     ./libre-office.nix
     ./moolticute.nix
+    ./only-key.nix
     ./pulse-sms.nix
     ./signal.nix
     ./slack.nix
